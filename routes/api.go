@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"cardando/backend/handlers"
+	"revosearch/backend/handlers"
 
 	"github.com/gofiber/fiber/v2"
 )

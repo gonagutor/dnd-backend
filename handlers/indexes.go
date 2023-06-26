@@ -4,7 +4,9 @@ import "github.com/gofiber/fiber/v2"
 
 func APIIndex(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusAccepted).JSON(fiber.Map{
-		"v1": "/api/v1",
+		"login":    "/login",
+		"register": "/register",
+		"v1":       "/api/v1",
 	})
 }
 

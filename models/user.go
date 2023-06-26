@@ -1,7 +1,7 @@
 package models
 
 import (
-	"cardando/backend/utils"
+	"revosearch/backend/utils"
 	"time"
 
 	"github.com/google/uuid"

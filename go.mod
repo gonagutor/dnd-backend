@@ -1,4 +1,4 @@
-module cardando/backend
+module revosearch/backend
 
 go 1.20
 

@@ -1,11 +1,11 @@
 package main
 
 import (
-	"cardando/backend/handlers"
-	"cardando/backend/models"
-	"cardando/backend/routes"
-	"cardando/backend/utils"
 	"log"
+	"revosearch/backend/handlers"
+	"revosearch/backend/models"
+	"revosearch/backend/routes"
+	"revosearch/backend/utils"
 
 	"github.com/TwiN/go-color"
 	"github.com/gofiber/fiber/v2"
