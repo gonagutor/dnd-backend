@@ -28,7 +28,7 @@ type User struct {
 func (user *User) BeforeCreate(tx *gorm.DB) error {
 	user.ID = uuid.New()
 
-	passwordHashed, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	passwordHashed, err := bcrypt.GenerateFromPassword([]byte(user.Password), 15)
 	if err != nil {
 		return err
 	}

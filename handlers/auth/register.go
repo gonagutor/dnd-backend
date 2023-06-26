@@ -8,7 +8,6 @@ import (
 	"revosearch/backend/utils/validators"
 
 	"github.com/gofiber/fiber/v2"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type RegisterRequest struct {
@@ -18,7 +17,7 @@ type RegisterRequest struct {
 	Surname  string `json:"surname" validate:"required,max=64"`
 }
 
-func validateAndParseBody(ctx *fiber.Ctx) (*RegisterRequest, error) {
+func validateAndParseRegisterBody(ctx *fiber.Ctx) (*RegisterRequest, error) {
 	ret := new(RegisterRequest)
 	bodyParserError := ctx.BodyParser(ret)
 	if bodyParserError != nil {
@@ -39,7 +38,7 @@ func validateAndParseBody(ctx *fiber.Ctx) (*RegisterRequest, error) {
 	return ret, nil
 }
 
-func prechecks(ctx *fiber.Ctx, body *RegisterRequest) (bool, error) {
+func registrationPrechecks(ctx *fiber.Ctx, body *RegisterRequest) (bool, error) {
 	userExists, _ := models.FindUserByEmail(body.Email)
 	if userExists != nil {
 		return false, ctx.Status(fiber.StatusConflict).JSON(fiber.Map{
@@ -52,17 +51,9 @@ func prechecks(ctx *fiber.Ctx, body *RegisterRequest) (bool, error) {
 }
 
 func createUser(ctx *fiber.Ctx, body *RegisterRequest) (*models.User, error) {
-	password, encriptionError := bcrypt.GenerateFromPassword([]byte(body.Password), bcrypt.DefaultCost)
-	if encriptionError != nil {
-		return nil, ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error":   http_errors.COULD_NOT_CREATE_USER,
-			"message": "Could not encript password",
-		})
-	}
-
 	user := &models.User{
 		Email:    body.Email,
-		Password: string(password),
+		Password: body.Password,
 		Name:     body.Name,
 		Surname:  body.Surname,
 	}
@@ -101,12 +92,12 @@ func sendRegistrationEmail(ctx *fiber.Ctx, user *models.User) (bool, error) {
 }
 
 func Register(ctx *fiber.Ctx) error {
-	body, err := validateAndParseBody(ctx)
+	body, err := validateAndParseRegisterBody(ctx)
 	if body == nil {
 		return err
 	}
 
-	passesPrechecks, prechecksResponseError := prechecks(ctx, body)
+	passesPrechecks, prechecksResponseError := registrationPrechecks(ctx, body)
 	if !passesPrechecks {
 		return prechecksResponseError
 	}
