@@ -1,6 +1,7 @@
 package models
 
 import (
+	utils_constants "revosearch/backend/constants/utils"
 	"revosearch/backend/utils"
 	"time"
 
@@ -19,6 +20,7 @@ type User struct {
 	Password       string    `gorm:"type:varchar(128);not null"`
 	Role           string    `gorm:"type:varchar(16);not null;default:user"`
 	ProfilePicture string    `gorm:"default:null"`
+	RefreshKey     string    `gorm:"type:varchar(16);not null"`
 	IsActive       bool      `gorm:"not null;default:false"`
 	DeletedAt      *time.Time
 	CreatedAt      *time.Time
@@ -28,11 +30,12 @@ type User struct {
 func (user *User) BeforeCreate(tx *gorm.DB) error {
 	user.ID = uuid.New()
 
-	passwordHashed, err := bcrypt.GenerateFromPassword([]byte(user.Password), 15)
+	passwordHashed, err := bcrypt.GenerateFromPassword([]byte(user.Password), utils_constants.PASSWORD_COST)
 	if err != nil {
 		return err
 	}
 	user.Password = string(passwordHashed)
+	user.RefreshKey = utils.GenerateRandomCode(15)
 	return nil
 }
 

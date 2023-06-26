@@ -5,6 +5,7 @@ import (
 	"revosearch/backend/errors/http_errors"
 	"revosearch/backend/models"
 	"revosearch/backend/utils"
+	auth_utils "revosearch/backend/utils/auth"
 	"revosearch/backend/utils/validators"
 
 	"github.com/gofiber/fiber/v2"
@@ -69,7 +70,7 @@ func createUser(ctx *fiber.Ctx, body *RegisterRequest) (*models.User, error) {
 }
 
 func sendRegistrationEmail(ctx *fiber.Ctx, user *models.User) (bool, error) {
-	token, tokenErr := utils.GenerateEmailToken(user.ID.String())
+	token, tokenErr := auth_utils.GenerateEmailToken(user.ID.String())
 	if tokenErr != nil {
 		return false, ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error":   http_errors.COULD_NOT_GENERATE_VERIFICATION_CODE,

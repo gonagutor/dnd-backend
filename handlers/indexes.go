@@ -7,9 +7,13 @@ var v1Routes = fiber.Map{
 }
 
 var routes = fiber.Map{
-	"login":    "/login",
-	"register": "/register",
-	"v1":       v1Routes,
+	"login":            "/login",
+	"register":         "/register",
+	"refresh":          "/refresh",
+	"revoke":           "/revoke",
+	"recover_password": "/recover-password",
+	"validate_email":   "/validate-email",
+	"v1":               v1Routes,
 }
 
 func APIIndex(ctx *fiber.Ctx) error {
