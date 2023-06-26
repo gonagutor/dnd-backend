@@ -6,6 +6,7 @@ import (
 	"revosearch/backend/models"
 	"revosearch/backend/routes"
 	"revosearch/backend/utils"
+	"revosearch/backend/utils/validators"
 
 	"github.com/TwiN/go-color"
 	"github.com/gofiber/fiber/v2"
@@ -19,7 +20,7 @@ func SetupApp() {
 	viewEngine := pug.New("templates", ".pug")
 	app := fiber.New(fiber.Config{
 		Views:   viewEngine,
-		Prefork: true,
+		Prefork: false,
 	})
 
 	app.Use(helmet.New())
@@ -28,6 +29,7 @@ func SetupApp() {
 	app.Get("/metrics", monitor.New(monitor.Config{Title: "Flat Searcher Metrics Page"}))
 
 	routes.SetupVersionedRoutes(app)
+	routes.SetupAuthRoutes(app)
 	app.Get("/", handlers.Status)
 	app.Listen(":3000")
 }
@@ -42,6 +44,7 @@ func AutoMigrateAll() {
 func main() {
 	utils.SetupEnv()
 	utils.SetupPostgresConnection()
+	validators.SetupValidator()
 	if !fiber.IsChild() {
 		AutoMigrateAll()
 	}

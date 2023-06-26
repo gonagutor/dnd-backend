@@ -9,10 +9,21 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/pug"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 )
 
-func AddGenericVariables(variables fiber.Map) fiber.Map {
+func GenerateEmailToken(userId string) (string, error) {
+	jwtSecret, _ := os.LookupEnv("JWT_SECRET")
+	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.RegisteredClaims{
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
+		Subject:   "email",
+		Audience:  []string{userId},
+	})
+	return jwtToken.SignedString([]byte(jwtSecret))
+}
+
+func addGenericVariables(variables fiber.Map) fiber.Map {
 	genericVariables := fiber.Map{"BASE_URL": os.Getenv("BASE_URL")}
 	merged := fiber.Map{}
 	for k, v := range genericVariables {
@@ -34,7 +45,7 @@ func SendMail(template string, to string, subject string, variables fiber.Map) e
 	port := os.Getenv("SMTP_PORT")
 
 	var buf bytes.Buffer
-	err := renderingEngine.Render(&buf, template, AddGenericVariables(variables))
+	err := renderingEngine.Render(&buf, template, addGenericVariables(variables))
 	if err != nil {
 		return err
 	}

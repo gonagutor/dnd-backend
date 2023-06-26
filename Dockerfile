@@ -1,5 +1,5 @@
 FROM golang:alpine
 
-WORKDIR /flat-searcher
+WORKDIR /revosearch
 COPY . .
-RUN go build -o /flat-searcher/backend main.go
+RUN go build -o /revosearch/backend main.go
