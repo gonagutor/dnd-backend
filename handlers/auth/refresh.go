@@ -10,6 +10,31 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+func refreshPrechecks(ctx *fiber.Ctx, refreshToken string) (*models.User, error) {
+	userId, key, errorValidatingToken := auth_utils.ValidateRefreshToken(refreshToken)
+	if errorValidatingToken != nil {
+		return nil, ctx.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"error":   http_errors.BAD_REFRESH_TOKEN,
+			"message": "Refresh token was tampered with or is malformed",
+		})
+	}
+	user, errorFindingUser := models.FindUserByID(userId)
+	if errorFindingUser != nil {
+		return nil, ctx.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"error":   http_errors.BAD_REFRESH_TOKEN,
+			"message": "User no longer exists",
+		})
+	}
+	keyError := user.CheckKey(key)
+	if keyError != nil {
+		return nil, ctx.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"error":   http_errors.REVOKED_REFRESH_TOKEN,
+			"message": "Refresh token has been revoked",
+		})
+	}
+	return user, nil
+}
+
 func Refresh(ctx *fiber.Ctx) error {
 	refreshToken, err := utils.ExtractToken(ctx)
 	if err != nil {
@@ -19,26 +44,9 @@ func Refresh(ctx *fiber.Ctx) error {
 		})
 	}
 
-	userId, key, errorValidatingToken := auth_utils.ValidateRefreshToken(refreshToken)
-	if errorValidatingToken != nil {
-		return ctx.Status(fiber.StatusForbidden).JSON(fiber.Map{
-			"error":   http_errors.BAD_REFRESH_TOKEN,
-			"message": "Refresh token was tampered with or is malformed",
-		})
-	}
-	user, errorFindingUser := models.FindUserByID(userId)
-	if errorFindingUser != nil {
-		return ctx.Status(fiber.StatusForbidden).JSON(fiber.Map{
-			"error":   http_errors.BAD_REFRESH_TOKEN,
-			"message": "User no longer exists",
-		})
-	}
-	keyError := user.CheckKey(key)
-	if keyError != nil {
-		return ctx.Status(fiber.StatusForbidden).JSON(fiber.Map{
-			"error":   http_errors.REVOKED_REFRESH_TOKEN,
-			"message": "Refresh token has been revoked",
-		})
+	user, precheckResponseError := refreshPrechecks(ctx, refreshToken)
+	if user == nil {
+		return precheckResponseError
 	}
 
 	token, tokenError := auth_utils.GenerateAccessToken(user)

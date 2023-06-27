@@ -34,32 +34,40 @@ func validateAndParseLoginBody(ctx *fiber.Ctx) (*LoginRequest, error) {
 	return login, nil
 }
 
+func loginPrechecks(ctx *fiber.Ctx, body *LoginRequest) (*models.User, error) {
+	user, err := models.FindUserByEmail(body.Email)
+	if err != nil {
+		return nil, ctx.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"error":   http_errors.BAD_EMAIL,
+			"message": "Email could not be found. User not registered",
+		})
+	}
+	passwordCorrect := user.CheckPassword(body.Password)
+	if passwordCorrect != nil {
+		println(passwordCorrect.Error())
+		return nil, ctx.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"error":   http_errors.BAD_PASSWORD,
+			"message": "Incorrect password",
+		})
+	}
+	if !user.IsActive {
+		return nil, ctx.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"error":   http_errors.EMAIL_NOT_VERIFIED,
+			"message": "Email not verified, please verify your email and try again",
+		})
+	}
+	return user, nil
+}
+
 func Login(ctx *fiber.Ctx) error {
 	login, validationResponseError := validateAndParseLoginBody(ctx)
 	if login == nil {
 		return validationResponseError
 	}
 
-	user, err := models.FindUserByEmail(login.Email)
-	if err != nil {
-		return ctx.Status(fiber.StatusForbidden).JSON(fiber.Map{
-			"error":   http_errors.BAD_EMAIL,
-			"message": "Email could not be found. User not registered",
-		})
-	}
-	passwordCorrect := user.CheckPassword(login.Password)
-	if passwordCorrect != nil {
-		println(passwordCorrect.Error())
-		return ctx.Status(fiber.StatusForbidden).JSON(fiber.Map{
-			"error":   http_errors.BAD_PASSWORD,
-			"message": "Incorrect password",
-		})
-	}
-	if !user.IsActive {
-		return ctx.Status(fiber.StatusForbidden).JSON(fiber.Map{
-			"error":   http_errors.EMAIL_NOT_VERIFIED,
-			"message": "Email not verified, please verify your email and try again",
-		})
+	user, prechecksResponseError := loginPrechecks(ctx, login)
+	if user == nil {
+		return prechecksResponseError
 	}
 
 	accessToken, accessTokenError := auth_utils.GenerateAccessToken(user)
