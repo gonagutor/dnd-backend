@@ -35,7 +35,7 @@ func (user *User) BeforeCreate(tx *gorm.DB) error {
 		return err
 	}
 	user.Password = string(passwordHashed)
-	user.RefreshKey = utils.GenerateRandomCode(15)
+	user.RefreshKey = utils.GenerateRandomCode(utils_constants.REFRESH_KEY_LENGTH)
 	return nil
 }
 

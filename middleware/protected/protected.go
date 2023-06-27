@@ -31,7 +31,7 @@ func New(config Config) fiber.Handler {
 
 		token, tokenNotExtractable := utils.ExtractToken(ctx)
 		if tokenNotExtractable != nil {
-			return ctx.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 				"error":   http_errors.BAD_REQUEST,
 				"message": "Could not extract token",
 			})

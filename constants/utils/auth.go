@@ -1,6 +1,7 @@
 package utils_constants
 
 const (
+	REFRESH_KEY_LENGTH      = 15
 	PASSWORD_COST           = 10
 	ISSUER                  = "revosearch"
 	REFRESH_TOKEN_COST      = 10
