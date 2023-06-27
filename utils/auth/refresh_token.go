@@ -1,6 +1,7 @@
 package auth_utils
 
 import (
+	"errors"
 	"os"
 	utils_constants "revosearch/backend/constants/utils"
 	"revosearch/backend/models"
@@ -31,4 +32,24 @@ func GenerateRefreshToken(user *models.User) (string, error) {
 		},
 	})
 	return jwtToken.SignedString([]byte(jwtSecret))
+}
+
+func ValidateRefreshToken(tokenString string) (id string, key string, err error) {
+	token, err := jwt.ParseWithClaims(tokenString, &RefreshTokenClaims{}, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("unexpected signing method in auth token")
+		}
+		jwtSecret, _ := os.LookupEnv("JWT_SECRET")
+		return []byte(jwtSecret), nil
+	})
+
+	if err != nil {
+		return "", "", err
+	}
+
+	claims, ok := token.Claims.(*RefreshTokenClaims)
+	if !ok || !token.Valid || claims.Subject == "" || claims.Type != utils_constants.REFRESH_TOKEN_TYPE || claims.Issuer != utils_constants.ISSUER {
+		return "", "", errors.New("invalid token: authentication failed")
+	}
+	return claims.Subject, claims.CustomKey, nil
 }

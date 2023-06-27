@@ -47,14 +47,24 @@ func FindUserByEmail(email string) (*User, error) {
 	return ret, nil
 }
 
-func FindUserByID(id uuid.UUID) (*User, error) {
-	ret := &User{ID: id}
+func FindUserByID(id string) (*User, error) {
+	idParsed, parseError := uuid.Parse(id)
+	if parseError != nil {
+		return nil, parseError
+	}
+
+	ret := &User{ID: idParsed}
 	if err := utils.PGConnection.First(ret, ret).Error; err != nil {
 		return nil, err
 	}
+
 	return ret, nil
 }
 
 func (user *User) CheckPassword(password string) error {
 	return bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+}
+
+func (user *User) CheckKey(key string) error {
+	return bcrypt.CompareHashAndPassword([]byte(key), []byte(user.ID.String()+user.RefreshKey))
 }
