@@ -51,6 +51,13 @@ func New(config Config) fiber.Handler {
 			})
 		}
 
+		if !user.IsActive {
+			return ctx.Status(fiber.StatusForbidden).JSON(fiber.Map{
+				"error":   http_errors.EMAIL_NOT_VERIFIED,
+				"message": "Email not verified, please verify your email and try again",
+			})
+		}
+
 		ctx.Locals("user", user)
 		return ctx.Next()
 	}

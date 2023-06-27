@@ -13,5 +13,5 @@ func SetupAuthRoutes(app *fiber.App) {
 	app.Post("/recover-password", auth.Refresh)
 	app.Post("/refresh", auth.Refresh)
 	app.Post("/revoke", protected.New(protected.Config{}), auth.Revoke)
-	app.Post("/validate-email", auth.ValidateEmail)
+	app.Get("/validate-email", auth.ValidateEmail)
 }

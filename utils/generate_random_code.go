@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	POSSIBLE_CHARACTERS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ?¿+-.,ç*[]{}¡!"
+	POSSIBLE_CHARACTERS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 )
 
 func GenerateRandomCode(count int) string {

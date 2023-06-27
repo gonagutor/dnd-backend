@@ -35,14 +35,7 @@ func GenerateRefreshToken(user *models.User) (string, error) {
 }
 
 func ValidateRefreshToken(tokenString string) (id string, key string, err error) {
-	token, err := jwt.ParseWithClaims(tokenString, &RefreshTokenClaims{}, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, errors.New("unexpected signing method in auth token")
-		}
-		jwtSecret, _ := os.LookupEnv("JWT_SECRET")
-		return []byte(jwtSecret), nil
-	})
-
+	token, err := jwt.ParseWithClaims(tokenString, &RefreshTokenClaims{}, KeyFunc)
 	if err != nil {
 		return "", "", err
 	}

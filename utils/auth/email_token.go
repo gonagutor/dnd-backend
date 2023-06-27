@@ -1,6 +1,7 @@
 package auth_utils
 
 import (
+	"errors"
 	"os"
 	utils_constants "revosearch/backend/constants/utils"
 	"time"
@@ -24,4 +25,18 @@ func GenerateEmailToken(userId string) (string, error) {
 		},
 	})
 	return jwtToken.SignedString([]byte(jwtSecret))
+}
+
+func ValidateEmailToken(tokenString string) (id string, err error) {
+	token, err := jwt.ParseWithClaims(tokenString, &EmailTokenClaims{}, KeyFunc)
+	if err != nil {
+		return "", err
+	}
+
+	claims, ok := token.Claims.(*EmailTokenClaims)
+	print(ok)
+	if !ok || !token.Valid || claims.Subject == "" || claims.Type != utils_constants.EMAIL_TOKEN_TYPE || claims.Issuer != utils_constants.ISSUER {
+		return "", errors.New("invalid token: authentication failed")
+	}
+	return claims.Subject, nil
 }

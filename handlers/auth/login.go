@@ -55,6 +55,12 @@ func Login(ctx *fiber.Ctx) error {
 			"message": "Incorrect password",
 		})
 	}
+	if !user.IsActive {
+		return ctx.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"error":   http_errors.EMAIL_NOT_VERIFIED,
+			"message": "Email not verified, please verify your email and try again",
+		})
+	}
 
 	accessToken, accessTokenError := auth_utils.GenerateAccessToken(user)
 	refreshToken, refreshTokenError := auth_utils.GenerateRefreshToken(user)
