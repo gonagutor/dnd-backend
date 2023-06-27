@@ -20,7 +20,7 @@ func SetupApp() {
 	viewEngine := pug.New("templates", ".pug")
 	app := fiber.New(fiber.Config{
 		Views:   viewEngine,
-		Prefork: false,
+		Prefork: true,
 	})
 
 	app.Use(helmet.New())
