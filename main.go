@@ -39,6 +39,14 @@ func AutoMigrateAll() {
 	if err != nil {
 		log.Fatal(color.InRed("Could not auto migrate db: ") + err.Error())
 	}
+	err = utils.PGConnection.AutoMigrate(&models.FlatSearch{})
+	if err != nil {
+		log.Fatal(color.InRed("Could not auto migrate db: ") + err.Error())
+	}
+	err = utils.PGConnection.AutoMigrate(&models.Flat{})
+	if err != nil {
+		log.Fatal(color.InRed("Could not auto migrate db: ") + err.Error())
+	}
 }
 
 func main() {

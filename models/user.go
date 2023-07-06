@@ -13,7 +13,7 @@ import (
 type User struct {
 	gorm.Model
 
-	ID             uuid.UUID `gorm:"type:uuid;primary_key;"`
+	ID             uuid.UUID `gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
 	Email          string    `gorm:"type:varchar(256);not null"`
 	Name           string    `gorm:"type:varchar(32);not null"`
 	Surname        string    `gorm:"type:varchar(64);not null"`
@@ -22,14 +22,13 @@ type User struct {
 	ProfilePicture string    `gorm:"default:null"`
 	RefreshKey     string    `gorm:"type:varchar(16);not null"`
 	IsActive       bool      `gorm:"not null;default:false"`
-	DeletedAt      *time.Time
-	CreatedAt      *time.Time
-	UpdatedAt      *time.Time
+
+	DeletedAt *time.Time `gorm:"default:null"`
+	CreatedAt *time.Time `gorm:"not null;default:current_timestamp"`
+	UpdatedAt *time.Time `gorm:"not null;default:current_timestamp"`
 }
 
 func (user *User) BeforeCreate(tx *gorm.DB) error {
-	user.ID = uuid.New()
-
 	passwordHashed, err := bcrypt.GenerateFromPassword([]byte(user.Password), utils_constants.PASSWORD_COST)
 	if err != nil {
 		return err
