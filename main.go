@@ -1,12 +1,12 @@
 package main
 
 import (
+	"dnd/backend/handlers"
+	"dnd/backend/models"
+	"dnd/backend/routes"
+	"dnd/backend/utils"
+	"dnd/backend/utils/validators"
 	"log"
-	"revosearch/backend/handlers"
-	"revosearch/backend/models"
-	"revosearch/backend/routes"
-	"revosearch/backend/utils"
-	"revosearch/backend/utils/validators"
 
 	"github.com/TwiN/go-color"
 	"github.com/gofiber/fiber/v2"
@@ -36,14 +36,6 @@ func SetupApp() {
 
 func AutoMigrateAll() {
 	err := utils.PGConnection.AutoMigrate(&models.User{})
-	if err != nil {
-		log.Fatal(color.InRed("Could not auto migrate db: ") + err.Error())
-	}
-	err = utils.PGConnection.AutoMigrate(&models.FlatSearch{})
-	if err != nil {
-		log.Fatal(color.InRed("Could not auto migrate db: ") + err.Error())
-	}
-	err = utils.PGConnection.AutoMigrate(&models.Flat{})
 	if err != nil {
 		log.Fatal(color.InRed("Could not auto migrate db: ") + err.Error())
 	}

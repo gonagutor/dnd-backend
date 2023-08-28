@@ -1,5 +1,5 @@
 FROM golang:alpine
 
-WORKDIR /revosearch
+WORKDIR /dnd
 COPY . .
-RUN go build -o /revosearch/backend main.go
+RUN go build -o /dnd/backend main.go

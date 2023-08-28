@@ -1,12 +1,12 @@
 package auth
 
 import (
-	"revosearch/backend/constants/http_codes"
-	"revosearch/backend/errors/http_errors"
-	"revosearch/backend/models"
-	"revosearch/backend/utils"
-	auth_utils "revosearch/backend/utils/auth"
-	"revosearch/backend/utils/validators"
+	"dnd/backend/constants/http_codes"
+	"dnd/backend/errors/http_errors"
+	"dnd/backend/models"
+	"dnd/backend/utils"
+	auth_utils "dnd/backend/utils/auth"
+	"dnd/backend/utils/validators"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -78,7 +78,7 @@ func sendRegistrationEmail(ctx *fiber.Ctx, user *models.User) (bool, error) {
 		})
 	}
 
-	emailError := utils.SendMail("validate_email", user.Email, "Verifica tu cuenta en revosearch", fiber.Map{
+	emailError := utils.SendMail("validate_email", user.Email, "Verifica tu cuenta en dnd", fiber.Map{
 		"name":  user.Name,
 		"token": token,
 	})

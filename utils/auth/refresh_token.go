@@ -1,10 +1,10 @@
 package auth_utils
 
 import (
+	utils_constants "dnd/backend/constants/utils"
+	"dnd/backend/models"
 	"errors"
 	"os"
-	utils_constants "revosearch/backend/constants/utils"
-	"revosearch/backend/models"
 
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"

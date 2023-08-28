@@ -3,11 +3,11 @@ package auth
 import (
 	"github.com/gofiber/fiber/v2"
 
-	"revosearch/backend/constants/http_codes"
-	"revosearch/backend/errors/http_errors"
-	"revosearch/backend/models"
-	auth_utils "revosearch/backend/utils/auth"
-	"revosearch/backend/utils/validators"
+	"dnd/backend/constants/http_codes"
+	"dnd/backend/errors/http_errors"
+	"dnd/backend/models"
+	auth_utils "dnd/backend/utils/auth"
+	"dnd/backend/utils/validators"
 )
 
 type LoginRequest struct {

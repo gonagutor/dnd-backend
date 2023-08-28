@@ -1,9 +1,9 @@
 package auth_utils
 
 import (
+	utils_constants "dnd/backend/constants/utils"
 	"errors"
 	"os"
-	utils_constants "revosearch/backend/constants/utils"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"

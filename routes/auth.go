@@ -3,8 +3,8 @@ package routes
 import (
 	"github.com/gofiber/fiber/v2"
 
-	"revosearch/backend/handlers/auth"
-	"revosearch/backend/middleware/protected"
+	"dnd/backend/handlers/auth"
+	"dnd/backend/middleware/protected"
 )
 
 func SetupAuthRoutes(app *fiber.App) {

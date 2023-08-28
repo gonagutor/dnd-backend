@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"revosearch/backend/handlers"
+	"dnd/backend/handlers"
 
 	"github.com/gofiber/fiber/v2"
 )

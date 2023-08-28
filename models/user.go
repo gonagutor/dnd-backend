@@ -1,8 +1,8 @@
 package models
 
 import (
-	utils_constants "revosearch/backend/constants/utils"
-	"revosearch/backend/utils"
+	utils_constants "dnd/backend/constants/utils"
+	"dnd/backend/utils"
 	"time"
 
 	"github.com/google/uuid"

@@ -1,11 +1,11 @@
 package auth
 
 import (
-	"revosearch/backend/constants/http_codes"
-	utils_constants "revosearch/backend/constants/utils"
-	"revosearch/backend/errors/http_errors"
-	"revosearch/backend/middleware/protected"
-	"revosearch/backend/utils"
+	"dnd/backend/constants/http_codes"
+	utils_constants "dnd/backend/constants/utils"
+	"dnd/backend/errors/http_errors"
+	"dnd/backend/middleware/protected"
+	"dnd/backend/utils"
 
 	"github.com/gofiber/fiber/v2"
 )
