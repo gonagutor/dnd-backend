@@ -10,6 +10,7 @@ import (
 
 	"github.com/TwiN/go-color"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/helmet"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/monitor"
@@ -25,6 +26,10 @@ func SetupApp() {
 
 	app.Use(helmet.New())
 	app.Use(logger.New(logger.ConfigDefault))
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: "http://localhost:3001, http://127.0.0.1:3001",
+	}))
+
 	app.Static("/static", "./static")
 	app.Get("/metrics", monitor.New(monitor.Config{Title: "Flat Searcher Metrics Page"}))
 
@@ -36,6 +41,10 @@ func SetupApp() {
 
 func AutoMigrateAll() {
 	err := utils.PGConnection.AutoMigrate(&models.User{})
+	if err != nil {
+		log.Fatal(color.InRed("Could not auto migrate db: ") + err.Error())
+	}
+	err = utils.PGConnection.AutoMigrate(&models.Character{})
 	if err != nil {
 		log.Fatal(color.InRed("Could not auto migrate db: ") + err.Error())
 	}
