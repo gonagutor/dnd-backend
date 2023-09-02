@@ -85,6 +85,12 @@ func Login(ctx *fiber.Ctx) error {
 		"data": fiber.Map{
 			"accessToken":  accessToken,
 			"refreshToken": refreshToken,
+			"user": fiber.Map{
+				"id":             user.ID,
+				"name":           user.Name,
+				"surname":        user.Surname,
+				"profilePicture": user.ProfilePicture,
+			},
 		},
 	})
 }
