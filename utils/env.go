@@ -10,7 +10,7 @@ import (
 
 func SetupEnv() {
 	err := godotenv.Load(".env")
-	if err != nil {
+	if err != nil && os.Getenv("enviroment") != "production" {
 		log.Println(color.Ize(color.Yellow, "No .env file. Copy .env.example to .env or create a new one. You can ignore this message if running on a docker container"))
 	}
 
