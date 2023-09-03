@@ -28,7 +28,7 @@ func SetupApp() {
 	app.Use(helmet.New())
 	app.Use(logger.New(logger.ConfigDefault))
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://localhost:3001, http://127.0.0.1:3001",
+		AllowOrigins: "http://localhost:3001, http://127.0.0.1:3001" + os.Getenv("ALLOWED_ORIGINS"),
 	}))
 
 	app.Static("/static", "./static")
