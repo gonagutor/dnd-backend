@@ -20,6 +20,5 @@ ENV BASE_URL=$BASE_URL
 WORKDIR /dnd
 COPY . .
 RUN go build -o dnd-backend
-EXPOSE $PORT
 
 CMD ./dnd-backend
