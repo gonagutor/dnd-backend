@@ -1,12 +1,9 @@
-ARG APP_NAME=dnd
-
 # Build stage
 FROM golang:1.20.4 as build
-ARG APP_NAME
-WORKDIR /app
+WORKDIR /dnd
 COPY . .
 RUN go mod download
-RUN go build -o /$APP_NAME
+RUN go build -o dnd-backend
 
 # Production stage
 FROM alpine:latest as production
@@ -32,6 +29,6 @@ ENV APP_NAME=$APP_NAME
 # ENV ALLOWED_ORIGINS=$ALLOWED_ORIGINS
 # ENV PORT=$PORT
 
-WORKDIR /root/
-COPY --from=build /$APP_NAME ./
+WORKDIR /dnd
+COPY --from=build /dnd/dnd-backend ./
 CMD ./$APP_NAME
