@@ -2,34 +2,34 @@ package utils
 
 import (
 	"log"
+	"os"
 
 	"github.com/TwiN/go-color"
 	"github.com/joho/godotenv"
 )
 
 func SetupEnv() {
-	godotenv.Load(".env")
-	env, err := godotenv.Read(".env")
+	err := godotenv.Load(".env")
 	if err != nil {
 		log.Println(color.Ize(color.Yellow, "No .env file. Copy .env.example to .env or create a new one. You can ignore this message if running on a docker container"))
 	}
 
-	if env["POSTGRES_PASSWORD"] == "" {
+	if os.Getenv("POSTGRES_PASSWORD") == "" {
 		log.Fatalf(color.Ize(color.Red, "POSTGRES_PASSWORD missing from enviroment"))
 	}
-	if env["POSTGRES_USER"] == "" {
+	if os.Getenv("POSTGRES_USER") == "" {
 		log.Fatalf(color.Ize(color.Red, "POSTGRES_USER missing from enviroment"))
 	}
-	if env["POSTGRES_DB"] == "" {
+	if os.Getenv("POSTGRES_DB") == "" {
 		log.Fatalf(color.Ize(color.Red, "POSTGRES_DB missing from enviroment"))
 	}
-	if env["POSTGRES_PORT"] == "" {
+	if os.Getenv("POSTGRES_PORT") == "" {
 		log.Fatalf(color.Ize(color.Red, "POSTGRES_PORT missing from enviroment"))
 	}
-	if env["POSTGRES_HOST"] == "" {
+	if os.Getenv("POSTGRES_HOST") == "" {
 		log.Fatalf(color.Ize(color.Red, "POSTGRES_HOST missing from enviroment"))
 	}
-	if env["JWT_SECRET"] == "" {
+	if os.Getenv("JWT_SECRET") == "" {
 		log.Fatalf(color.Ize(color.Red, "JWT_SECRET missing from enviroment"))
 	}
 
