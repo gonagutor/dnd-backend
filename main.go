@@ -21,9 +21,8 @@ import (
 func SetupApp() {
 	viewEngine := pug.New("templates", ".pug")
 	app := fiber.New(fiber.Config{
-		Views:          viewEngine,
-		Prefork:        true,
-		TrustedProxies: []string{"*"},
+		Views:   viewEngine,
+		Prefork: true,
 	})
 
 	app.Use(helmet.New())
