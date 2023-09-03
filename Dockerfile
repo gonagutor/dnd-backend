@@ -31,4 +31,4 @@ ENV APP_NAME=$APP_NAME
 
 WORKDIR /dnd
 COPY --from=build /dnd/dnd-backend ./
-CMD ./$APP_NAME
+CMD ./dnd-backend
