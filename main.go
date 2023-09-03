@@ -7,6 +7,7 @@ import (
 	"dnd/backend/utils"
 	"dnd/backend/utils/validators"
 	"log"
+	"os"
 
 	"github.com/TwiN/go-color"
 	"github.com/gofiber/fiber/v2"
@@ -36,7 +37,11 @@ func SetupApp() {
 	routes.SetupVersionedRoutes(app)
 	routes.SetupAuthRoutes(app)
 	app.Get("/", handlers.Status)
-	app.Listen(":3000")
+	if os.Getenv("PORT") != "" {
+		app.Listen(":" + os.Getenv("PORT"))
+	} else {
+		app.Listen(":3000")
+	}
 }
 
 func AutoMigrateAll() {

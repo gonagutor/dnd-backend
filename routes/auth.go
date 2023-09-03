@@ -10,8 +10,9 @@ import (
 func SetupAuthRoutes(app *fiber.App) {
 	app.Post("/login", auth.Login)
 	app.Post("/register", auth.Register)
-	app.Post("/recover-password", auth.Refresh)
 	app.Post("/refresh", auth.Refresh)
+	app.Post("/recover-password", auth.RedeemRecoveryCode)
+	app.Post("/recover-password-request", auth.RecoverPassword)
 	app.Post("/revoke", protected.New(protected.Config{}), auth.Revoke)
 	app.Get("/validate-email", auth.ValidateEmail)
 }

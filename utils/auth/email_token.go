@@ -14,6 +14,11 @@ type EmailTokenClaims struct {
 	jwt.RegisteredClaims
 }
 
+type RecoverTokenClaims struct {
+	Type string `json:"type"`
+	jwt.RegisteredClaims
+}
+
 func GenerateEmailToken(userId string) (string, error) {
 	jwtSecret, _ := os.LookupEnv("JWT_SECRET")
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS512, EmailTokenClaims{
@@ -36,6 +41,32 @@ func ValidateEmailToken(tokenString string) (id string, err error) {
 	claims, ok := token.Claims.(*EmailTokenClaims)
 	print(ok)
 	if !ok || !token.Valid || claims.Subject == "" || claims.Type != utils_constants.EMAIL_TOKEN_TYPE || claims.Issuer != utils_constants.ISSUER {
+		return "", errors.New("invalid token: authentication failed")
+	}
+	return claims.Subject, nil
+}
+
+func GenerateRecoverToken(userId string) (string, error) {
+	jwtSecret, _ := os.LookupEnv("JWT_SECRET")
+	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS512, RecoverTokenClaims{
+		utils_constants.RECOVER_TOKEN_TYPE,
+		jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(utils_constants.RECOVER_TOKEN_EXPIRATION * time.Hour)),
+			Issuer:    utils_constants.ISSUER,
+			Subject:   userId,
+		},
+	})
+	return jwtToken.SignedString([]byte(jwtSecret))
+}
+
+func ValidateRecoverToken(tokenString string) (string, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &RecoverTokenClaims{}, KeyFunc)
+	if err != nil {
+		return "", err
+	}
+
+	claims, ok := token.Claims.(*RecoverTokenClaims)
+	if !ok || !token.Valid || claims.Subject == "" || claims.Type != utils_constants.RECOVER_TOKEN_TYPE || claims.Issuer != utils_constants.ISSUER {
 		return "", errors.New("invalid token: authentication failed")
 	}
 	return claims.Subject, nil

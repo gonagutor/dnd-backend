@@ -69,29 +69,6 @@ func createUser(ctx *fiber.Ctx, body *RegisterRequest) (*models.User, error) {
 	return user, nil
 }
 
-func sendRegistrationEmail(ctx *fiber.Ctx, user *models.User) (bool, error) {
-	token, tokenErr := auth_utils.GenerateEmailToken(user.ID.String())
-	if tokenErr != nil {
-		return false, ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error":   http_errors.COULD_NOT_GENERATE_VERIFICATION_CODE,
-			"message": "Verification code could not be generated",
-		})
-	}
-
-	emailError := utils.SendMail("validate_email", user.Email, "Verifica tu cuenta en dnd", fiber.Map{
-		"name":  user.Name,
-		"token": token,
-	})
-	if emailError != nil {
-		return false, ctx.Status(fiber.StatusBadGateway).JSON(fiber.Map{
-			"error":   http_errors.COULD_NOT_SEND_EMAIL,
-			"message": "Email could not be sent",
-		})
-	}
-
-	return true, nil
-}
-
 func Register(ctx *fiber.Ctx) error {
 	body, err := validateAndParseRegisterBody(ctx)
 	if body == nil {
@@ -108,9 +85,24 @@ func Register(ctx *fiber.Ctx) error {
 		return userResponseError
 	}
 
-	emailSentOk, emailResponseError := sendRegistrationEmail(ctx, user)
-	if !emailSentOk {
-		return emailResponseError
+	token, tokenErr := auth_utils.GenerateEmailToken(user.ID.String())
+	if tokenErr != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error":   http_errors.COULD_NOT_GENERATE_VERIFICATION_CODE,
+			"message": "Verification code could not be generated",
+		})
+	}
+
+	emailError := utils.SendMail("validate_email", user.Email, "Verifica tu cuenta en dnd", fiber.Map{
+		"name":  user.Name,
+		"token": token,
+	})
+	if emailError != nil {
+		utils.PGConnection.Delete(user)
+		return ctx.Status(fiber.StatusBadGateway).JSON(fiber.Map{
+			"error":   http_errors.COULD_NOT_SEND_EMAIL,
+			"message": "Email could not be sent",
+		})
 	}
 
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
