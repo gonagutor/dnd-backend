@@ -14,6 +14,9 @@ func SetupEnv() {
 		log.Println(color.Ize(color.Yellow, "No .env file. Copy .env.example to .env or create a new one. You can ignore this message if running on a docker container"))
 	}
 
+	for _, e := range os.Environ() {
+		log.Printf(e)
+	}
 	if os.Getenv("POSTGRES_PASSWORD") == "" {
 		log.Fatalf(color.Ize(color.Red, "POSTGRES_PASSWORD missing from enviroment"))
 	}
