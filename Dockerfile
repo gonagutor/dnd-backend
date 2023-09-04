@@ -9,5 +9,5 @@ RUN go build -o dnd-backend
 FROM debian:latest as production
 WORKDIR /dnd
 COPY --from=build /dnd/dnd-backend ./
-COPY --from=build /dnd/templates ./
+COPY --from=build /dnd/templates ./templates
 CMD ./dnd-backend
