@@ -2,6 +2,7 @@ package utils
 
 import (
 	"bytes"
+	"crypto/tls"
 	"fmt"
 	"net/smtp"
 	"os"
@@ -32,6 +33,7 @@ func SendMail(template string, to string, subject string, variables fiber.Map) e
 	password := os.Getenv("SMTP_PASSWORD")
 	host := os.Getenv("SMTP_HOST")
 	port := os.Getenv("SMTP_PORT")
+	useSSL := os.Getenv("SMTP_USE_SSL")
 
 	var buf bytes.Buffer
 	err := renderingEngine.Render(&buf, template, addGenericVariables(variables))
@@ -39,6 +41,55 @@ func SendMail(template string, to string, subject string, variables fiber.Map) e
 		return err
 	}
 	msg := fmt.Sprintf("From: %s\r\nTo: %s\r\nSubject: %s\r\nContent-Type: text/html; charset=\"utf-8\"\r\nDate: %s\r\nMessage-Id: %s\r\nContent-Transfer-Encoding: quoted-printable\r\nContent-Disposition: inline\r\n\r\n%s", from, to, subject, time.Now().Format(time.RFC822), uuid.New().String(), buf.String())
+
 	auth := smtp.PlainAuth("", user, password, host)
+	if useSSL == "true" {
+		tlsconfig := &tls.Config{
+			InsecureSkipVerify: true,
+			ServerName:         host,
+		}
+		conn, err := tls.Dial("tcp", host+":"+port, tlsconfig)
+		if err != nil {
+			return err
+		}
+
+		client, err := smtp.NewClient(conn, host)
+		if err != nil {
+			return err
+		}
+
+		err = client.Auth(auth)
+		if err != nil {
+			return err
+		}
+
+		err = client.Mail(from)
+		if err != nil {
+			return err
+		}
+
+		err = client.Rcpt(to)
+		if err != nil {
+			return err
+		}
+
+		writer, err := client.Data()
+		if err != nil {
+			return err
+		}
+
+		_, err = writer.Write([]byte(msg))
+		if err != nil {
+			return err
+		}
+
+		err = writer.Close()
+		if err != nil {
+			return err
+		}
+
+		return client.Quit()
+	}
+
 	return smtp.SendMail(host+":"+port, auth, from, []string{to}, []byte(msg))
 }
