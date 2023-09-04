@@ -59,7 +59,8 @@ func SendMail(template string, to string, subject string, variables fiber.Map) e
 	auth := smtp.PlainAuth("", user, password, host)
 	if useSSL == "true" {
 		tlsconfig := &tls.Config{
-			ServerName: host,
+			InsecureSkipVerify: true,
+			ServerName:         host,
 		}
 		conn, err := tls.Dial("tcp", host+":"+port, tlsconfig)
 		if err != nil {
