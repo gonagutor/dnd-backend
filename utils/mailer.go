@@ -2,15 +2,17 @@ package utils
 
 import (
 	"bytes"
+	"crypto/rand"
 	"crypto/tls"
 	"fmt"
+	"math"
+	"math/big"
 	"net/smtp"
 	"os"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/pug"
-	"github.com/google/uuid"
 )
 
 func addGenericVariables(variables fiber.Map) fiber.Map {
@@ -24,6 +26,18 @@ func addGenericVariables(variables fiber.Map) fiber.Map {
 	}
 
 	return merged
+}
+
+func generateMessageID() string {
+	t := time.Now().UnixNano()
+	pid := os.Getpid()
+	rint, _ := rand.Int(rand.Reader, big.NewInt(math.MaxInt64))
+	h, err := os.Hostname()
+	if err != nil {
+		h = "localhost"
+	}
+	msgid := fmt.Sprintf("<%d.%d.%d@%s>", t, pid, rint, h)
+	return msgid
 }
 
 func SendMail(template string, to string, subject string, variables fiber.Map) error {
@@ -40,13 +54,12 @@ func SendMail(template string, to string, subject string, variables fiber.Map) e
 	if err != nil {
 		return err
 	}
-	msg := fmt.Sprintf("From: %s\r\nTo: %s\r\nSubject: %s\r\nContent-Type: text/html; charset=\"utf-8\"\r\nDate: %s\r\nMessage-Id: %s\r\nContent-Transfer-Encoding: quoted-printable\r\nContent-Disposition: inline\r\n\r\n%s", from, to, subject, time.Now().Format(time.RFC822), uuid.New().String(), buf.String())
+	msg := fmt.Sprintf("From: %s\r\nTo: %s\r\nSubject: %s\r\nContent-Type: text/html; charset=\"utf-8\"\r\nDate: %s\r\nMessage-Id: %s\r\nContent-Transfer-Encoding: quoted-printable\r\nContent-Disposition: inline\r\n\r\n%s", from, to, subject, time.Now().Format(time.RFC1123Z), generateMessageID(), buf.String())
 
 	auth := smtp.PlainAuth("", user, password, host)
 	if useSSL == "true" {
 		tlsconfig := &tls.Config{
-			InsecureSkipVerify: true,
-			ServerName:         host,
+			ServerName: host,
 		}
 		conn, err := tls.Dial("tcp", host+":"+port, tlsconfig)
 		if err != nil {
