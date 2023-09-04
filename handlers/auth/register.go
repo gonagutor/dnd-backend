@@ -7,6 +7,7 @@ import (
 	"dnd/backend/utils"
 	auth_utils "dnd/backend/utils/auth"
 	"dnd/backend/utils/validators"
+	"log"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -98,6 +99,7 @@ func Register(ctx *fiber.Ctx) error {
 		"token": token,
 	})
 	if emailError != nil {
+		log.Println(emailError)
 		utils.PGConnection.Delete(user)
 		return ctx.Status(fiber.StatusBadGateway).JSON(fiber.Map{
 			"error":   http_errors.COULD_NOT_SEND_EMAIL,
