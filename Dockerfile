@@ -6,10 +6,7 @@ RUN go mod download
 RUN go build -o dnd-backend
 
 # Production stage
-FROM alpine:latest as production
-ARG APP_NAME
-
-ENV APP_NAME=$APP_NAME
+FROM debian:latest as production
 # ENV POSTGRES_PASSWORD=$POSTGRES_PASSWORD
 # ENV POSTGRES_USER=$POSTGRES_USER
 # ENV POSTGRES_DB=$POSTGRES_DB
@@ -31,5 +28,4 @@ ENV APP_NAME=$APP_NAME
 
 WORKDIR /dnd
 COPY --from=build /dnd/dnd-backend ./
-RUN ls | echo
 CMD ./dnd-backend
