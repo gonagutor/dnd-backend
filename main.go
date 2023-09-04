@@ -32,7 +32,7 @@ func SetupApp() {
 	}))
 
 	app.Static("/static", "./static")
-	app.Get("/metrics", monitor.New(monitor.Config{Title: "Flat Searcher Metrics Page"}))
+	app.Get("/metrics", monitor.New(monitor.Config{Title: "DND Metrics Page"}))
 
 	routes.SetupVersionedRoutes(app)
 	routes.SetupAuthRoutes(app)

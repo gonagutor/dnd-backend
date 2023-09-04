@@ -1,6 +1,28 @@
-html
-  h2 Hola, #{.name}
-  p Empieza tu búqueda
-  a(href=`{{.BASE_URL}}/validate-email?token={{.token}}`) Haz click aquí
-  p Si el botón no funciona copia y pega lo siguiente en tu navegador
-  code #{.BASE_URL}/validate-email?token=#{.token}
+<!-- Hidden Preheader Text →<div style="display:none;font-size:1px;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;mso-hide:all;font-family:sans-serif;">      DND - Recupera tu contraseña.      </div><!-- Hidden Preheader Text - END -->
+doctype html
+html(lang="es" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" style="background-color: #deca9d; color: #0b0906; font-family: Aerials, sans-serif;")
+  table(style="max-width: 600px; margin: auto;")
+    tr
+      td(style="height: 64px")
+    tr
+      td(style="font-size: 32px; text-align: center; font-weight: bold") Hola, #{.name}
+    tr
+      td(style="height: 16px")
+    tr
+      td(style="font-size: 24px; height: 32px;") ¡Bienvenido!
+    tr
+      td(style="font-size: 16px; height: 32px;") Te has creado una cuenta en dnd
+    tr
+      td(style="font-size: 16px; height: 32px;") Cuando hayas verificado tu correo vuelve a la web y podrás crear tu primer personaje
+    tr
+      td(style="height: 16px")
+    tr
+      td(align="center" style="height: 48px")
+        a(style="font-size: 24px; text-decoration: none; font-weight: bold; padding: 16px 128px; color: #d3bb7c; background-color: #362016; border-radius: 16px;" href=`{{.BASE_URL}}/recover-password?token={{.token}}`) Haz click aquí
+    tr
+      td(style="height: 16px")
+    tr
+      td(align="center" style="font-size: 12px") Si el botón no funciona copia y pega lo siguiente en tu navegador
+    tr
+      td
+        p(style="font-size: 12px; background-color: #d3bb7c; padding: 16px; border-radius: 16px") #{.BASE_URL}/recover-password?token=#{.token}

@@ -10,4 +10,5 @@ FROM debian:latest as production
 WORKDIR /dnd
 COPY --from=build /dnd/dnd-backend ./
 COPY --from=build /dnd/templates ./templates
+COPY --from=build /dnd/static ./static
 CMD ./dnd-backend

@@ -107,3 +107,28 @@ func SendMail(template string, to string, subject string, variables fiber.Map) e
 
 	return smtp.SendMail(host+":"+port, auth, from, []string{to}, []byte(msg))
 }
+
+func TestEmailRoutes(app *fiber.App) {
+	app.Get("/template/email/:template_name", func(ctx *fiber.Ctx) error {
+		return ctx.Render("emails/"+ctx.Params("template_name"), fiber.Map{
+			"name":     "Gonzalo",
+			"BASE_URL": "http://localhost:3000",
+			"token":    "test",
+		})
+	})
+	app.Get("/template/email/:template_name/test/:to", func(ctx *fiber.Ctx) error {
+		err := SendMail(ctx.Params("template_name"), ctx.Params("to"), "Verifica tu cuenta en dnd", fiber.Map{
+			"name":  "Gonzalo",
+			"token": "token",
+		})
+
+		if err == nil {
+			return ctx.Status(fiber.StatusBadGateway).JSON(fiber.Map{
+				"result": "OK",
+			})
+		}
+		return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+			"result": err.Error(),
+		})
+	})
+}
