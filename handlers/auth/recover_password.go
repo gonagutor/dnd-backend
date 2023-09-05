@@ -63,7 +63,7 @@ func RecoverPassword(ctx *fiber.Ctx) error {
 	}
 
 	recoverToken, err := auth_utils.GenerateRecoverToken(user.ID.String())
-	if err == nil {
+	if err != nil {
 		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"error":   http_errors.BAD_RECOVER_TOKEN,
 			"message": err.Error(),

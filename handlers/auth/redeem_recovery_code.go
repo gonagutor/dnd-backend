@@ -61,7 +61,7 @@ func RedeemRecoveryCode(ctx *fiber.Ctx) error {
 	}
 
 	id, validateTokenError := auth_utils.ValidateRecoverToken(recoveryData.Token)
-	if validateTokenError == nil {
+	if validateTokenError != nil {
 		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"error":   http_errors.BAD_RECOVER_TOKEN,
 			"message": validateTokenError.Error(),
@@ -83,7 +83,7 @@ func RedeemRecoveryCode(ctx *fiber.Ctx) error {
 	user.Password = string(passwordHashed)
 	utils.PGConnection.Save(user)
 
-	return ctx.Status(fiber.StatusNotImplemented).JSON(fiber.Map{
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 		"code":    http_codes.PASSWORD_CHANGED,
 		"message": "Password successfully changed",
 	})
