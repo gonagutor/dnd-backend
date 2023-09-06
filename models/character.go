@@ -79,6 +79,15 @@ type Character struct {
 	UpdatedAt *time.Time `gorm:"not null;default:current_timestamp"`
 }
 
+func RestoreDeletedCharacter(id string) error {
+	idParsed, parseError := uuid.Parse(id)
+	if parseError != nil {
+		return parseError
+	}
+
+	return utils.PGConnection.Model(&Character{}).Where("id", idParsed).Update("deleted_at", nil).Error
+}
+
 func FindCharacterByID(id string) (*Character, error) {
 	idParsed, parseError := uuid.Parse(id)
 	if parseError != nil {
