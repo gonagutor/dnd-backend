@@ -12,4 +12,5 @@ func SetupCharacterRoutes(app *fiber.App) {
 
 	characters.Patch("/:character_id/coins", v1_character_handler.UpdateCoins)
 	characters.Delete("/:character_id/delete", protected.New(protected.Config{}), v1_character_handler.DeleteCharacter)
+	characters.Put("/:character_id/restore_character", protected.New(protected.Config{}), v1_character_handler.RestoreCharacter)
 }
