@@ -20,6 +20,7 @@ type Character struct {
 	Name         string    `gorm:"not null"`
 
 	XP                 int `gorm:"not null"`
+	Level              int `gorm:"not null;default:1"`
 	AC                 int `gorm:"not null"`
 	HP                 int `gorm:"not null"`
 	TemporaryHP        int `gorm:"not null"`
