@@ -56,7 +56,7 @@ func LevelUp(ctx *fiber.Ctx) error {
 	}
 
 	xpTable := [19]int{300, 900, 2700, 6500, 14000, 23000, 34000, 48000, 64000, 85000, 100000, 120000, 140000, 165000, 195000, 225000, 265000, 305000, 355000}
-	if character.XP < xpTable[character.Level-1] {
+	if character.XP < xpTable[character.Level] {
 		return ctx.Status(fiber.StatusForbidden).JSON(fiber.Map{
 			"error":   http_errors.CHARACTER_CANT_LEVEL_UP,
 			"message": "This character cant level up yet",
@@ -70,8 +70,8 @@ func LevelUp(ctx *fiber.Ctx) error {
 		})
 	}
 
-	currentLevel := detectLevel(character.XP, xpTable[:])
-	if math.Floor(float64(currentLevel/4)) > math.Floor(float64(character.Level/4)) {
+	newLevel := detectLevel(character.XP, character.Level, xpTable[character.Level:])
+	if math.Floor(float64(newLevel/4)) > math.Floor(float64(character.Level/4)) {
 		character.ProficiencyBonus += 1
 
 		character.Strength += levelUp.Strength
@@ -82,12 +82,12 @@ func LevelUp(ctx *fiber.Ctx) error {
 		character.Charisma += levelUp.Charisma
 	}
 
-	character.Level = currentLevel
+	character.Level = newLevel
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 		"code":    http_codes.LEVEL_UP,
 		"message": "Character level up",
 		"data": fiber.Map{
-			"currentLevel": currentLevel,
+			"currentLevel": newLevel,
 			"strength":     character.Strength,
 			"dexterity":    character.Dexterity,
 			"constitution": character.Constitution,
@@ -98,13 +98,15 @@ func LevelUp(ctx *fiber.Ctx) error {
 	})
 }
 
-func detectLevel(xp int, xpTable []int) int {
-	level := 1
-	for i := 0; i < 19; i++ {
+func detectLevel(xp int, currentLevel int, xpTable []int) int {
+	newLevel := currentLevel
+	for i := 0; i < len(xpTable); i++ {
 		if xp >= xpTable[i] {
-			level++
+			newLevel++
+		} else {
+			break
 		}
 	}
 
-	return level
+	return newLevel
 }
