@@ -14,4 +14,5 @@ func SetupCharacterRoutes(app *fiber.App) {
 	characters.Delete("/:character_id/delete", v1_character_handler.DeleteCharacter)
 	characters.Put("/:character_id/restore_character", v1_character_handler.RestoreCharacter)
 	characters.Patch("/:character_id/level_up", v1_character_handler.LevelUp)
+	characters.Patch("/:charcater_id/heal", v1_character_handler.Heal)
 }

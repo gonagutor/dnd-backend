@@ -5,6 +5,7 @@ import (
 	"dnd/backend/errors/http_errors"
 	"dnd/backend/middleware/protected"
 	"dnd/backend/models"
+	"dnd/backend/utils"
 	"dnd/backend/utils/validators"
 	"math"
 
@@ -70,8 +71,8 @@ func LevelUp(ctx *fiber.Ctx) error {
 		})
 	}
 
-	newLevel := detectLevel(character.XP, character.Level, xpTable[character.Level:])
-	if math.Floor(float64(newLevel/4)) > math.Floor(float64(character.Level/4)) {
+	currentLevel := detectLevel(character.XP, character.Level, xpTable[character.Level:])
+	if math.Floor(float64(currentLevel/4)) > math.Floor(float64(character.Level/4)) {
 		character.ProficiencyBonus += 1
 
 		character.Strength += levelUp.Strength
@@ -82,12 +83,20 @@ func LevelUp(ctx *fiber.Ctx) error {
 		character.Charisma += levelUp.Charisma
 	}
 
-	character.Level = newLevel
+	character.Level = currentLevel
+	saveError := utils.PGConnection.Save(character)
+	if saveError.Error != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error":   http_errors.COULD_NOT_UPDATE_CHARACTER,
+			"message": "Character could not level up",
+		})
+	}
+
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 		"code":    http_codes.LEVEL_UP,
 		"message": "Character level up",
 		"data": fiber.Map{
-			"currentLevel": newLevel,
+			"currentLevel": currentLevel,
 			"strength":     character.Strength,
 			"dexterity":    character.Dexterity,
 			"constitution": character.Constitution,
