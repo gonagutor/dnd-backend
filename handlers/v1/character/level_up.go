@@ -56,7 +56,7 @@ func LevelUp(ctx *fiber.Ctx) error {
 	}
 
 	xpTable := [19]int{300, 900, 2700, 6500, 14000, 23000, 34000, 48000, 64000, 85000, 100000, 120000, 140000, 165000, 195000, 225000, 265000, 305000, 355000}
-	if character.XP < xpTable[character.Level] {
+	if character.XP < xpTable[character.Level-1] {
 		return ctx.Status(fiber.StatusForbidden).JSON(fiber.Map{
 			"error":   http_errors.CHARACTER_CANT_LEVEL_UP,
 			"message": "This character cant level up yet",
