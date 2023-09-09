@@ -39,7 +39,6 @@ func LevelUp(ctx *fiber.Ctx) error {
 		})
 	}
 
-	user := protected.GetUserFromContext(ctx)
 	characterId := ctx.Params("character_id")
 	character, err := models.FindCharacterByID(characterId)
 	if err != nil {
@@ -49,6 +48,7 @@ func LevelUp(ctx *fiber.Ctx) error {
 		})
 	}
 
+	user := protected.GetUserFromContext(ctx)
 	if user.ID != character.UserID {
 		return ctx.Status(fiber.StatusForbidden).JSON(fiber.Map{
 			"error":   http_errors.CHARACTER_DELETE_NOT_ALLOWED,
@@ -83,6 +83,7 @@ func LevelUp(ctx *fiber.Ctx) error {
 		character.Charisma += levelUp.Charisma
 	}
 
+	previousLevel := character.Level
 	character.Level = currentLevel
 	saveError := utils.PGConnection.Save(character)
 	if saveError.Error != nil {
@@ -96,13 +97,14 @@ func LevelUp(ctx *fiber.Ctx) error {
 		"code":    http_codes.LEVEL_UP,
 		"message": "Character level up",
 		"data": fiber.Map{
-			"currentLevel": currentLevel,
-			"strength":     character.Strength,
-			"dexterity":    character.Dexterity,
-			"constitution": character.Constitution,
-			"intelligence": character.Intelligence,
-			"wisdom":       character.Wisdom,
-			"charisma":     character.Charisma,
+			"previousLevel": previousLevel,
+			"currentLevel":  currentLevel,
+			"strength":      character.Strength,
+			"dexterity":     character.Dexterity,
+			"constitution":  character.Constitution,
+			"intelligence":  character.Intelligence,
+			"wisdom":        character.Wisdom,
+			"charisma":      character.Charisma,
 		},
 	})
 }

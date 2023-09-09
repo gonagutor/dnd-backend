@@ -3,6 +3,7 @@ package v1_character_handler
 import (
 	"dnd/backend/constants/http_codes"
 	"dnd/backend/errors/http_errors"
+	"dnd/backend/middleware/protected"
 	"dnd/backend/models"
 	"dnd/backend/utils"
 
@@ -29,6 +30,14 @@ func Heal(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"error":   http_errors.CHARACTER_NOT_FOUND,
 			"message": "Character could not be found",
+		})
+	}
+
+	user := protected.GetUserFromContext(ctx)
+	if user.ID != character.UserID {
+		return ctx.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"error":   http_errors.CHARACTER_DELETE_NOT_ALLOWED,
+			"message": "This is not your character",
 		})
 	}
 
