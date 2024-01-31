@@ -4,6 +4,14 @@ services:
   #    build: "../webapp"
   #    depends_on:
   #      - backend
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
   backend:
     build: .
     ports:
@@ -26,8 +34,13 @@ services:
       ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
       PORT: ${PORT}
       enviroment: production
+      MONGO_USERNAME: ${MONGO_USERNAME}
+      MONGO_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_HOST: ${MONGO_HOST}
+      MONGO_PORT: ${MONGO_PORT}
     depends_on:
       #- redis
+      - mongo
       - pg
   pg:
     image: postgres:alpine

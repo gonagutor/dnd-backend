@@ -1,4 +1,4 @@
-package routes
+package v1_routes
 
 import (
 	"dnd/backend/handlers"
@@ -9,4 +9,6 @@ import (
 func SetupVersionedRoutes(app *fiber.App) {
 	v1 := app.Group("/v1")
 	v1.Get("/", handlers.V1Index)
+
+	SetupClassRoutes(v1)
 }

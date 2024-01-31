@@ -4,6 +4,7 @@ import (
 	"dnd/backend/handlers"
 	"dnd/backend/models"
 	"dnd/backend/routes"
+	v1_routes "dnd/backend/routes/v1"
 	"dnd/backend/utils"
 	"dnd/backend/utils/validators"
 	"log"
@@ -33,10 +34,11 @@ func SetupApp() {
 
 	app.Static("/static", "./static")
 	app.Get("/metrics", monitor.New(monitor.Config{Title: "DND Metrics Page"}))
-
-	routes.SetupVersionedRoutes(app)
-	routes.SetupAuthRoutes(app)
 	app.Get("/", handlers.Status)
+
+	v1_routes.SetupVersionedRoutes(app)
+	routes.SetupAuthRoutes(app)
+
 	if os.Getenv("PORT") != "" {
 		app.Listen(":" + os.Getenv("PORT"))
 	} else {
@@ -58,6 +60,7 @@ func AutoMigrateAll() {
 func main() {
 	utils.SetupEnv()
 	utils.SetupPostgresConnection()
+	utils.SetupMongoConnection()
 	validators.SetupValidator()
 	if !fiber.IsChild() {
 		AutoMigrateAll()

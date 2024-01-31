@@ -33,4 +33,36 @@ func SetupEnv() {
 		log.Fatalf(color.Ize(color.Red, "JWT_SECRET missing from enviroment"))
 	}
 
+	if os.Getenv("MONGO_PASSWORD") == "" {
+		log.Fatalf(color.Ize(color.Red, "MONGO_PASSWORD missing from enviroment"))
+	}
+	if os.Getenv("MONGO_USERNAME") == "" {
+		log.Fatalf(color.Ize(color.Red, "MONGO_USERNAME missing from enviroment"))
+	}
+	if os.Getenv("MONGO_PORT") == "" {
+		log.Fatalf(color.Ize(color.Red, "MONGO_PORT missing from enviroment"))
+	}
+	if os.Getenv("MONGO_HOST") == "" {
+		log.Fatalf(color.Ize(color.Red, "MONGO_HOST missing from enviroment"))
+	}
+
+	if os.Getenv("BASE_URL") == "" {
+		log.Fatalf(color.InYellow("BASE_URL missing from enviroment"))
+	}
+
+	if os.Getenv("SMTP_FROM") == "" {
+		log.Println(color.InYellow("SMTP_FROM missing from enviroment"))
+	}
+	if os.Getenv("SMTP_USER") == "" {
+		log.Println(color.InYellow("SMTP_USER missing from enviroment"))
+	}
+	if os.Getenv("SMTP_PASSWORD") == "" {
+		log.Println(color.InYellow("SMTP_PASSWORD missing from enviroment"))
+	}
+	if os.Getenv("SMTP_HOST") == "" {
+		log.Println(color.InYellow("SMTP_HOST missing from enviroment"))
+	}
+	if os.Getenv("SMTP_PORT") == "" {
+		log.Println(color.InYellow("SMTP_PORT missing from enviroment"))
+	}
 }
