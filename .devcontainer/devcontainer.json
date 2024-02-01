@@ -20,5 +20,6 @@
     }
   },
   "forwardPorts": [3001, 8080],
+  "postCreateCommand": "cd dnd-backend && go mod download cd ../dnd-frontend && yarn install",
   "remoteUser": "vscode"
 }
