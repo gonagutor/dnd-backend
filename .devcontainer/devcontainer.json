@@ -1,0 +1,24 @@
+{
+  "name": "Every repo with backend",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ExodiusStudios.comment-anchors",
+        "Equinusocio.vsc-community-material-theme",
+        "dotenv.dotenv-vscode",
+        "usernamehw.errorlens",
+        "dbaeumer.vscode-eslint",
+        "golang.go",
+        "equinusocio.vsc-material-theme-icons",
+        "esbenp.prettier-vscode",
+        "gencer.html-slim-scss-css-class-completion",
+        "styled-components.vscode-styled-components"
+      ]
+    }
+  },
+  "forwardPorts": [3000],
+  "remoteUser": "vscode"
+}
