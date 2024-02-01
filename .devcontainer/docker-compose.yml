@@ -9,7 +9,7 @@ services:
         GO_VERSION: 1.20.5
 
     volumes:
-      - ..:/workspace:dnd-backend
+      - ..:/workspace/dnd-backend
     command: sleep infinity
     network_mode: service:pg
 
