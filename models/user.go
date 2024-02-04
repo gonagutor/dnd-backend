@@ -5,6 +5,7 @@ import (
 	"dnd/backend/utils"
 	"time"
 
+	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -66,4 +67,36 @@ func (user *User) CheckPassword(password string) error {
 
 func (user *User) CheckKey(key string) error {
 	return bcrypt.CompareHashAndPassword([]byte(key), []byte(user.ID.String()+user.RefreshKey))
+}
+
+func GetAllUsers(ctx *fiber.Ctx) ([]User, error) {
+	var users []User
+
+	err := utils.Paginate(ctx).Omit("password", "refresh_key").Find(&users)
+	if err.Error != nil {
+		return nil, err.Error
+	}
+
+	return users, nil
+}
+
+func CountUsers() int64 {
+	var count int64
+	utils.PGConnection.Model(&User{}).Count(&count)
+	return count
+}
+
+func UserExistsByID(id string) bool {
+	idParsed, parseError := uuid.Parse(id)
+	if parseError != nil {
+		return false
+	}
+
+	var count int64 = 0
+	utils.PGConnection.First(&User{ID: idParsed}).Count(&count)
+	if count == 0 {
+		return false
+	}
+
+	return true
 }

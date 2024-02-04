@@ -22,7 +22,7 @@ func SetupApp() {
 	viewEngine := pug.New("templates", ".pug")
 	app := fiber.New(fiber.Config{
 		Views:   viewEngine,
-		Prefork: true,
+		Prefork: false,
 	})
 
 	app.Use(helmet.New())
@@ -36,6 +36,7 @@ func SetupApp() {
 
 	routes.SetupVersionedRoutes(app)
 	routes.SetupAuthRoutes(app)
+	routes.SetupUserRoutes(app)
 	app.Get("/", handlers.Status)
 	if os.Getenv("PORT") != "" {
 		app.Listen(":" + os.Getenv("PORT"))
