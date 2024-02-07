@@ -30,9 +30,10 @@ func GetAll(ctx *fiber.Ctx) error {
 		"code":    "USERS_FOUND",
 		"message": "Users found",
 		"pagination": fiber.Map{
-			"page":     page,
-			"maxPages": math.Ceil(float64(models.CountUsers()) / float64(pageSize)),
-			"pageSize": pageSize,
+			"page":       page,
+			"maxPages":   math.Ceil(float64(models.CountUsers()) / float64(pageSize)),
+			"pageSize":   pageSize,
+			"totalPages": math.Ceil(float64(models.CountUsers()) / float64(pageSize)),
 		},
 		"data": users,
 	})
