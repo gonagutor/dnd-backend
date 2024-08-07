@@ -5,8 +5,8 @@ services:
       context: ..
       dockerfile: .devcontainer/Dockerfile
       args:
-        NODE_VERSION: v18.12.1
-        GO_VERSION: 1.20.5
+        NODE_VERSION: v18.20.4
+        GO_VERSION: 1.22.6
 
     volumes:
       - ..:/workspace/dnd-backend
