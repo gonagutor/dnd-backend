@@ -1,6 +1,8 @@
 package v1_user_handler
 
 import (
+	"dnd/backend/constants/http_codes"
+	"dnd/backend/errors/http_errors"
 	"dnd/backend/models"
 	"dnd/backend/utils"
 	"math"
@@ -12,7 +14,7 @@ func GetAll(ctx *fiber.Ctx) error {
 	user := ctx.Locals("user").(*models.User)
 	if user.Role != "admin" {
 		return ctx.Status(fiber.StatusForbidden).JSON(fiber.Map{
-			"error":   "NOT_AN_ADMIN",
+			"error":   http_errors.NOT_AN_ADMIN,
 			"message": "You do not have permission to access this resource",
 		})
 	}
@@ -20,14 +22,14 @@ func GetAll(ctx *fiber.Ctx) error {
 	users, err := models.GetAllUsers(ctx)
 	if err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error":   "COULD_NOT_GET_USERS",
+			"error":   http_errors.COULD_NOT_GET_USERS,
 			"message": "Users could not be retrieved",
 		})
 	}
 
 	page, pageSize := utils.Pagination(ctx)
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
-		"code":    "USERS_FOUND",
+		"code":    http_codes.USERS_FOUND,
 		"message": "Users found",
 		"pagination": fiber.Map{
 			"page":     page,

@@ -1,6 +1,7 @@
 package v1_user_handler
 
 import (
+	"dnd/backend/constants/http_codes"
 	"dnd/backend/errors/http_errors"
 	"dnd/backend/models"
 	"dnd/backend/utils"
@@ -30,7 +31,7 @@ func EditUser(ctx *fiber.Ctx) error {
 	userUrl, err := models.FindUserByID(userId)
 	if err != nil {
 		return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"error":   "USER_NOT_FOUND",
+			"error":   http_errors.USER_NOT_FOUND,
 			"message": "User id by '" + userId + "' not found",
 		})
 	}
@@ -38,14 +39,14 @@ func EditUser(ctx *fiber.Ctx) error {
 	userLocal := ctx.Locals("user").(*models.User)
 	if userLocal.Role != "admin" && userLocal.ID != userUrl.ID {
 		return ctx.Status(fiber.StatusForbidden).JSON(fiber.Map{
-			"error":   "NOT_AN_ADMIN",
+			"error":   http_errors.NOT_AN_ADMIN,
 			"message": "You can only edit your own user",
 		})
 	}
 
 	if userLocal.Role != "admin" && editUser.Role != nil {
 		return ctx.Status(fiber.StatusForbidden).JSON(fiber.Map{
-			"error":   "NOT_AN_ADMIN",
+			"error":   http_errors.NOT_AN_ADMIN,
 			"message": "You can not edit the role",
 		})
 	}
@@ -69,13 +70,13 @@ func EditUser(ctx *fiber.Ctx) error {
 	err = utils.PGConnection.Save(&userUrl).Error
 	if err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error":   "COULD_NOT_EDIT_USER",
+			"error":   http_errors.COULD_NOT_EDIT_USER,
 			"message": "User could not be edited",
 		})
 	}
 
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
-		"code":    "USER_EDITED",
+		"code":    http_codes.USER_EDITED,
 		"message": "User edited",
 	})
 }

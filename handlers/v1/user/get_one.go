@@ -1,6 +1,8 @@
 package v1_user_handler
 
 import (
+	"dnd/backend/constants/http_codes"
+	"dnd/backend/errors/http_errors"
 	"dnd/backend/models"
 
 	"github.com/gofiber/fiber/v2"
@@ -12,13 +14,13 @@ func GetOne(ctx *fiber.Ctx) error {
 	user, err := models.FindUserByID(userId)
 	if err != nil {
 		return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"error":   "USER_NOT_FOUND",
-			"message": "User id by '" + userId + "' not found",
+			"error":   http_errors.USER_NOT_FOUND,
+			"message": "User with id '" + userId + "' not found",
 		})
 	}
 
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
-		"code":    "USER_FOUND",
+		"code":    http_codes.USER_FOUND,
 		"message": "User found",
 		"data": fiber.Map{
 			"userId":         user.ID,
