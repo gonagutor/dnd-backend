@@ -1,4 +1,4 @@
-package auth
+package v1_auth_handlers
 
 import (
 	"dnd/backend/constants/http_codes"
@@ -13,10 +13,10 @@ import (
 )
 
 type RegisterRequest struct {
-	Email    string `json:"email" validate:"required,email"`
-	Password string `json:"password" validate:"required,password"`
-	Name     string `json:"name" validate:"required,max=32"`
-	Surname  string `json:"surname" validate:"required,max=64"`
+	Email    string `json:"email" validate:"required,email" format:"email" example:"john@doe.com"`
+	Password string `json:"password" validate:"required,password" example:"Testtest1@"`
+	Name     string `json:"name" validate:"required,max=32" example:"Gonzalo"`
+	Surname  string `json:"surname" validate:"required,max=64" example:"Aguado Torres"`
 }
 
 func validateAndParseRegisterBody(ctx *fiber.Ctx) (*RegisterRequest, error) {
@@ -70,6 +70,17 @@ func createUser(ctx *fiber.Ctx, body *RegisterRequest) (*models.User, error) {
 	return user, nil
 }
 
+//	@Tags					Auth
+//  @Description	Creates an account and sends an email for verification
+//	@Accept				json
+//	@Produce			json
+//  @Param				Body	body	RegisterRequest	true	"Email, name, surname and password required for registration"
+//  @Success			201	{object}	responses.CorrectResponse	"If the response is successful you will receive simple code and message indicating that the account has been created"
+//  @Failure			400	{object}	responses.FailureResponse	"If a field is missing or the body couldn't be parsed the API will answer with a 400 code. In case a field is missing or has the incorrect format it will return the field which fails"
+//  @Failure			409 {object}	responses.FailureResponse "If the email already exists the server will return a 409 code"
+//  @Failure			500	{object}	responses.FailureResponse	"If the verification token could not be generated or the user could not be created it will return a 500 code. Please report this error if you encounter it in production"
+//  @Failure			502	{object}	responses.FailureResponse	"If nothing failed but the email could not be sent the server will return a 502 code. Please report this error if you encounter it in production"
+//  @Router 		/v1/auth/register [post]
 func Register(ctx *fiber.Ctx) error {
 	body, err := validateAndParseRegisterBody(ctx)
 	if body == nil {
@@ -107,7 +118,7 @@ func Register(ctx *fiber.Ctx) error {
 		})
 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+	return ctx.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"code":    http_codes.USER_CREATED,
 		"message": "User created successfully",
 	})

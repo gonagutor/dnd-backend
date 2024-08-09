@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "dnd/backend/docs/swagger"
 	"dnd/backend/handlers"
 	"dnd/backend/models"
 	"dnd/backend/routes"
@@ -15,6 +16,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/helmet"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/monitor"
+	"github.com/gofiber/swagger"
 	"github.com/gofiber/template/pug"
 )
 
@@ -33,10 +35,9 @@ func SetupApp() {
 
 	app.Static("/static", "./static")
 	app.Get("/metrics", monitor.New(monitor.Config{Title: "DND Metrics Page"}))
+	app.Get("/swagger/*", swagger.HandlerDefault)
 
 	routes.SetupVersionedRoutes(app)
-	routes.SetupAuthRoutes(app)
-	routes.SetupUserRoutes(app)
 	app.Get("/", handlers.Status)
 	if os.Getenv("PORT") != "" {
 		app.Listen(":" + os.Getenv("PORT"))
@@ -60,6 +61,22 @@ func AutoMigrateAll() {
 	}
 }
 
+// @title DND Api
+// @version 1.0
+// @description This is the API for https://dnd.gonagutor.com. This API handles content from the DND books, characters, campaigns and users
+// @host localhost:8080
+// @BasePath /
+// @schemes http https
+
+// @tag.name Auth
+// @tag.description The auth system uses an access token that expires every 15 minutes and a refresh token
+
+// @contact.name   Gonzalo Aguado Torres
+// @contact.url    https://dnd.gonagutor.com/support
+// @contact.email  gonagutor@gmail.com
+
+// @license.name  Apache 2.0
+// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 func main() {
 	utils.SetupEnv()
 	utils.SetupPostgresConnection()

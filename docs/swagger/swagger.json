@@ -1,0 +1,572 @@
+{
+    "schemes": [
+        "http",
+        "https"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "This is the API for https://dnd.gonagutor.com. This API handles content from the DND books, characters, campaigns and users",
+        "title": "DND Api",
+        "contact": {
+            "name": "Gonzalo Aguado Torres",
+            "url": "https://dnd.gonagutor.com/support",
+            "email": "gonagutor@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {
+        "/v1/auth/login": {
+            "post": {
+                "description": "Login request that returns a refresh and an access token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "parameters": [
+                    {
+                        "description": "Simple password and email login",
+                        "name": "Body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1_auth_handlers.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "When the response is successful you will receive an access token and a refresh token, along with some basic user data",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.CorrectResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/v1_auth_handlers.LoginResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "If a field is missing or the body couldn't be parsed the API will answer with a 400 code. In case a field is missing or has the incorrect format it will return the field which fails",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "The API can answer with a 403 if the password is incorrect or if the email has not been verified yet",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "If either token could not be generated it will return a 500 code. Please report this error if you encounter it in production",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/auth/recover-password": {
+            "post": {
+                "description": "Uses the provided token to change the user's password",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "parameters": [
+                    {
+                        "description": "The received token and the new password",
+                        "name": "Body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1_auth_handlers.RedeemRecoveryCodeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "If the response is successful you will receive simple code and message indicating that the passworc has been changed",
+                        "schema": {
+                            "$ref": "#/definitions/responses.CorrectResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "If a field is missing or the body couldn't be parsed the API will answer with a 400 code. In case a field is missing or has the incorrect format it will return the field which fails",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "The API can answer with a 403 if the token has expired or is invalid",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "If the hashed password could not be generated it will return a 500 code. Please report this error if you encounter it in production",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/auth/recover-password-request": {
+            "post": {
+                "description": "Uses the provided email to send a password recovery email",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "parameters": [
+                    {
+                        "description": "Email inside json body",
+                        "name": "Body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1_auth_handlers.RecoverPasswordRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "If the response is successful you will receive simple code and message indicating that the email has been sent",
+                        "schema": {
+                            "$ref": "#/definitions/responses.CorrectResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "If a field is missing or the body couldn't be parsed the API will answer with a 400 code. In case a field is missing or has the incorrect format it will return the field which fails",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "The API can answer with a 403 if the email doesn't exist or if the user has not verified their email",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "If the token could not be generated it will return a 500 code. Please report this error if you encounter it in production",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "If nothing failed but the email could not be sent the server will return a 502 code. Please report this error if you encounter it in production",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/auth/refresh": {
+            "post": {
+                "description": "Uses the refresh token in the header to generate a new access token for the user",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Refresh token with Bearer prefix",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "If the response is successful you will receive the new accessToken inside the data field of the response",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.CorrectResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/v1_auth_handlers.RefreshResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "If no token is provided the API will answer with a 400 code",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "The API can answer with a 403 if the token has expired or is invalid",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "If the new token could not be generated it will return a 500 code. Please report this error if you encounter it in production",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/auth/register": {
+            "post": {
+                "description": "Creates an account and sends an email for verification",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "parameters": [
+                    {
+                        "description": "Email, name, surname and password required for registration",
+                        "name": "Body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1_auth_handlers.RegisterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "If the response is successful you will receive simple code and message indicating that the account has been created",
+                        "schema": {
+                            "$ref": "#/definitions/responses.CorrectResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "If a field is missing or the body couldn't be parsed the API will answer with a 400 code. In case a field is missing or has the incorrect format it will return the field which fails",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "If the email already exists the server will return a 409 code",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "If the verification token could not be generated or the user could not be created it will return a 500 code. Please report this error if you encounter it in production",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "If nothing failed but the email could not be sent the server will return a 502 code. Please report this error if you encounter it in production",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/auth/revoke": {
+            "post": {
+                "description": "Revokes the refresh tokens",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Access token with Bearer prefix",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "If the response is successful you will receive simple code and message indicating that the token has been revoked",
+                        "schema": {
+                            "$ref": "#/definitions/responses.CorrectResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "If no token is provided the API will answer with a 400 code",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "The API can answer with a 403 if the token is invalid/malformed or the user has not verified their email yet",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "If the new token secret could not be saved it will return a 500 code. Please report this error if you encounter it in production",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/auth/validate-email": {
+            "get": {
+                "description": "Validates the user email using the token sent via email",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Validation token sent via email",
+                        "name": "Token",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "If the response is successful you will receive simple code and message indicating that the account has been verified",
+                        "schema": {
+                            "$ref": "#/definitions/responses.CorrectResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "If no token is provided the API will answer with a 400 code",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "The API can answer with a 403 if the token is invalid/malformed",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "The API will answer with a 409 if the email has already been verified",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "If the user could not be saved it will return a 500 code. Please report this error if you encounter it in production",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "responses.CorrectResponse": {
+            "description": "Action code and readable message. Data is optional",
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "responses.FailureResponse": {
+            "description": "Error code and readable error message",
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1_auth_handlers.LoginRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "john@doe.com"
+                },
+                "password": {
+                    "type": "string",
+                    "maxLength": 64,
+                    "minLength": 8,
+                    "example": "Testtest1@"
+                }
+            }
+        },
+        "v1_auth_handlers.LoginResponse": {
+            "type": "object",
+            "properties": {
+                "accessToken": {
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJ0eXBlIjoiYWNjZXNzIiwiaXNzIjoiZG5kIiwic3ViIjoiMDczZDhmN2ItMDIyNS00NGRjLWE3NTMtOGJmNzYyYmVkMzc0IiwiZXhwIjoxNzA2NDQwNjExfQ.YQ6shB0HGGw9tN5jo6cBzqjoB4LxGlNadC52exF_Hm7UYfsbf8uB-u1Sq7ukgkIkkHw-eR0VLwmjNCWmWoF6tA"
+                },
+                "refreshToken": {
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJrZXkiOiIkMmEkMTAkQmYwZ2FlUmxkOXRzWVEzbnBXSkFBZVlhdFlFZG9yWVVtRFl5VHl6TVA0a0lSRHdna1B3Y2EiLCJ0eXBlIjoicmVmcmVzaCIsImlzcyI6ImRuZCIsInN1YiI6IjA3M2Q4ZjdiLTAyMjUtNDRkYy1hNzUzLThiZjc2MmJlZDM3NCJ9.pv76u4p-kfAwGu8VPwzAKv5lGclrI85T2Uuu0kCT24hlfLRnjpU7iktgtlPujWuB_NVHxBKlvz_qkmyWeqLxlw"
+                },
+                "user": {
+                    "$ref": "#/definitions/v1_auth_handlers.NonSensitiveDataUser"
+                }
+            }
+        },
+        "v1_auth_handlers.NonSensitiveDataUser": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "eb7ed8ed-3316-47f3-a8c5-a0c17aa147f4"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Gonzalo"
+                },
+                "profilePicture": {
+                    "type": "string",
+                    "example": "https://picsum.photos/200/300"
+                },
+                "surname": {
+                    "type": "string",
+                    "example": "Aguado Torres"
+                }
+            }
+        },
+        "v1_auth_handlers.RecoverPasswordRequest": {
+            "type": "object",
+            "required": [
+                "email"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "john@doe.com"
+                }
+            }
+        },
+        "v1_auth_handlers.RedeemRecoveryCodeRequest": {
+            "type": "object",
+            "required": [
+                "password",
+                "token"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1_auth_handlers.RefreshResponse": {
+            "type": "object",
+            "properties": {
+                "accessToken": {
+                    "type": "string",
+                    "format": "jwt",
+                    "example": ""
+                }
+            }
+        },
+        "v1_auth_handlers.RegisterRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "name",
+                "password",
+                "surname"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "john@doe.com"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 32,
+                    "example": "Gonzalo"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "Testtest1@"
+                },
+                "surname": {
+                    "type": "string",
+                    "maxLength": 64,
+                    "example": "Aguado Torres"
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "description": "The auth system uses an access token that expires every 15 minutes and a refresh token",
+            "name": "Auth"
+        }
+    ]
+}
