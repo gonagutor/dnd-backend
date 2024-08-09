@@ -14,19 +14,19 @@ import (
 type User struct {
 	gorm.Model
 
-	ID             uuid.UUID `gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
-	Email          string    `gorm:"type:varchar(256);not null"`
-	Name           string    `gorm:"type:varchar(32);not null"`
-	Surname        string    `gorm:"type:varchar(64);not null"`
+	ID             uuid.UUID `gorm:"type:uuid;primary_key;default:gen_random_uuid()" json:"id"`
+	Email          string    `gorm:"type:varchar(256);not null" json:"email"`
+	Name           string    `gorm:"type:varchar(32);not null" json:"name"`
+	Surname        string    `gorm:"type:varchar(64);not null" json:"surname"`
 	Password       string    `gorm:"type:varchar(128);not null"`
-	Role           string    `gorm:"type:varchar(16);not null;default:user"`
-	ProfilePicture string    `gorm:"default:null"`
-	RefreshKey     string    `gorm:"type:varchar(16);not null"`
-	IsActive       bool      `gorm:"not null;default:false"`
+	Role           string    `gorm:"type:varchar(16);not null;default:user" json:"role"`
+	ProfilePicture string    `gorm:"default:null" json:"profilePicture"`
+	RefreshKey     string    `gorm:"type:varchar(16);not null" json:"refreshKey"`
+	IsActive       bool      `gorm:"not null;default:false" json:"isActive"`
 
-	DeletedAt *time.Time `gorm:"default:null"`
-	CreatedAt *time.Time `gorm:"not null;default:current_timestamp"`
-	UpdatedAt *time.Time `gorm:"not null;default:current_timestamp"`
+	DeletedAt *time.Time `gorm:"default:null" json:"deletedAt"`
+	CreatedAt *time.Time `gorm:"not null;default:current_timestamp" json:"createdAt"`
+	UpdatedAt *time.Time `gorm:"not null;default:current_timestamp" json:"updatedAt"`
 }
 
 func (user *User) BeforeCreate(tx *gorm.DB) error {
