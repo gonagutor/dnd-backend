@@ -10,7 +10,6 @@ import (
 func SetupUserRoutes(app *fiber.App) {
 	user := app.Group("/user")
 
-	user.Get("/pages", protected.New(protected.Config{}), v1_user_handler.GetPages)
 	user.Get("/:user_id", protected.New(protected.Config{}), v1_user_handler.GetOne)
 	user.Get("/", protected.New(protected.Config{}), v1_user_handler.GetAll)
 	user.Put("/:user_id", protected.New(protected.Config{}), v1_user_handler.EditUser)

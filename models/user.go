@@ -70,9 +70,20 @@ func (user *User) CheckKey(key string) error {
 }
 
 func GetAllUsers(ctx *fiber.Ctx) ([]User, error) {
+	key := ctx.Query("key")
+	if key == "" {
+		key = "created_at"
+	}
+
+	sortOrder := ctx.Query("sortOrder")
+	if sortOrder == "" {
+		sortOrder = "DESC"
+	}
+
+	order := key + " " + sortOrder
 	var users []User
 
-	err := utils.Paginate(ctx).Omit("password", "refresh_key").Find(&users)
+	err := utils.Paginate(ctx).Omit("password", "refresh_key").Order(order).Find(&users)
 	if err.Error != nil {
 		return nil, err.Error
 	}
