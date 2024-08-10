@@ -12,19 +12,19 @@ import (
 )
 
 type User struct {
-	gorm.Model
+	gorm.Model `swaggerignore:"true"`
 
-	ID             uuid.UUID `gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
-	Email          string    `gorm:"type:varchar(256);not null"`
-	Name           string    `gorm:"type:varchar(32);not null"`
-	Surname        string    `gorm:"type:varchar(64);not null"`
-	Password       string    `gorm:"type:varchar(128);not null"`
-	Role           string    `gorm:"type:varchar(16);not null;default:user"`
-	ProfilePicture string    `gorm:"default:null"`
-	RefreshKey     string    `gorm:"type:varchar(16);not null"`
-	IsActive       bool      `gorm:"not null;default:false"`
+	ID             uuid.UUID `gorm:"type:uuid;primary_key;default:gen_random_uuid()" example:"568659d6-b4c5-4b4d-8a32-4202447b6f88"`
+	Email          string    `gorm:"type:varchar(256);not null" example:"gonagutor@gmail.com"`
+	Name           string    `gorm:"type:varchar(32);not null" example:"Gonzalo"`
+	Surname        string    `gorm:"type:varchar(64);not null" example:"Aguado Torres"`
+	Password       string    `gorm:"type:varchar(128);not null" swaggerignore:"true"`
+	Role           string    `gorm:"type:varchar(16);not null;default:user" example:"user"`
+	ProfilePicture string    `gorm:"default:null" example:"https://picsum.photos/200/300"`
+	RefreshKey     string    `gorm:"type:varchar(16);not null" swaggerignore:"true"`
+	IsActive       bool      `gorm:"not null;default:false" example:"true"`
 
-	DeletedAt *time.Time `gorm:"default:null"`
+	DeletedAt *time.Time `gorm:"default:null" swaggerignore:"true"`
 	CreatedAt *time.Time `gorm:"not null;default:current_timestamp"`
 	UpdatedAt *time.Time `gorm:"not null;default:current_timestamp"`
 }
@@ -94,9 +94,6 @@ func UserExistsByID(id string) bool {
 
 	var count int64 = 0
 	utils.PGConnection.First(&User{ID: idParsed}).Count(&count)
-	if count == 0 {
-		return false
-	}
 
-	return true
+	return count != 0
 }

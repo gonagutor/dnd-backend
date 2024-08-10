@@ -1,4 +1,4 @@
-package auth
+package v1_auth_handlers
 
 import (
 	"dnd/backend/constants/http_codes"
@@ -60,6 +60,17 @@ func validatePrechecks(ctx *fiber.Ctx, token string) (*models.User, error) {
 	return user, nil
 }
 
+//	@Tags					Auth
+//	@Description	Validates the user email using the token sent via email
+//	@Accept				json
+//	@Produce			json
+//	@Param				Token	query	string	true	"Validation token sent via email"
+//	@Success			200	{object}	responses.CorrectResponse	"If the response is successful you will receive simple code and message indicating that the account has been verified"
+//	@Failure			400	{object}	responses.FailureResponse	"If no token is provided the API will answer with a 400 code"
+//	@Failure			403	{object}	responses.FailureResponse "The API can answer with a 403 if the token is invalid/malformed"
+//	@Failure			409 {object}	responses.FailureResponse "The API will answer with a 409 if the email has already been verified"
+//	@Failure			500	{object}	responses.FailureResponse	"If the user could not be saved it will return a 500 code. Please report this error if you encounter it in production"
+//	@Router 			/v1/auth/validate-email [get]
 func ValidateEmail(ctx *fiber.Ctx) error {
 	emailQuery, parseResponseError := validateAndParseEmailQuery(ctx)
 	if emailQuery == nil {
