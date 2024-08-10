@@ -1,7 +1,35 @@
 basePath: /
 definitions:
+  models.User:
+    properties:
+      createdAt:
+        type: string
+      email:
+        example: gonagutor@gmail.com
+        type: string
+      id:
+        example: 568659d6-b4c5-4b4d-8a32-4202447b6f88
+        type: string
+      isActive:
+        example: true
+        type: boolean
+      name:
+        example: Gonzalo
+        type: string
+      profilePicture:
+        example: https://picsum.photos/200/300
+        type: string
+      role:
+        example: user
+        type: string
+      surname:
+        example: Aguado Torres
+        type: string
+      updatedAt:
+        type: string
+    type: object
   responses.CorrectResponse:
-    description: Action code and readable message. Data is optional
+    description: Action code and readable message. Data and Pagination is optional
     properties:
       code:
         type: string
@@ -15,6 +43,18 @@ definitions:
         type: string
       message:
         type: string
+    type: object
+  responses.Pagination:
+    properties:
+      maxPage:
+        example: 4
+        type: integer
+      page:
+        example: 1
+        type: integer
+      pageSize:
+        example: 25
+        type: integer
     type: object
   v1_auth_handlers.LoginRequest:
     properties:
@@ -105,6 +145,24 @@ definitions:
     - name
     - password
     - surname
+    type: object
+  v1_user_handler.UpdateUserBody:
+    properties:
+      isActive:
+        example: false
+        type: boolean
+      name:
+        example: Gonzalo
+        type: string
+      profilePicture:
+        example: https://picsum.photos/200/300
+        type: string
+      role:
+        example: user
+        type: string
+      surname:
+        example: Aguado Torres
+        type: string
     type: object
 host: localhost:8080
 info:
@@ -402,6 +460,198 @@ paths:
             $ref: '#/definitions/responses.FailureResponse'
       tags:
       - Auth
+  /v1/user/:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve an user by id
+      parameters:
+      - description: Access token with Bearer prefix
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Page to show
+        in: query
+        name: page
+        type: integer
+      - description: Page size
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: If the response is successful you will receive the requested
+            user inside the data key
+          schema:
+            allOf:
+            - $ref: '#/definitions/responses.CorrectResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.User'
+                  type: array
+                pagination:
+                  $ref: '#/definitions/responses.Pagination'
+              type: object
+        "400":
+          description: If no token is provided the API will answer with a 400 code
+          schema:
+            $ref: '#/definitions/responses.FailureResponse'
+        "403":
+          description: The API can answer with a 403 if the token is invalid/malformed.
+            the user has not verified their email yet or the user is not an admin
+          schema:
+            $ref: '#/definitions/responses.FailureResponse'
+        "404":
+          description: If the if the user could not be found it will return a 404
+            code
+          schema:
+            $ref: '#/definitions/responses.FailureResponse'
+      tags:
+      - User
+  /v1/user/{user_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an user by id
+      parameters:
+      - description: Access token with Bearer prefix
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: User's id
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: If the response is successful you will receive a simple code
+            and message indicating that the user has been deleted
+          schema:
+            $ref: '#/definitions/responses.CorrectResponse'
+        "400":
+          description: If no token is provided the API will answer with a 400 code
+          schema:
+            $ref: '#/definitions/responses.FailureResponse'
+        "403":
+          description: The API can answer with a 403 if the token is invalid/malformed.
+            the user has not verified their email yet or (if the user is trying to
+            delete other than self) the user is not an admin
+          schema:
+            $ref: '#/definitions/responses.FailureResponse'
+        "404":
+          description: If the user could not be found it will return a 404 code
+          schema:
+            $ref: '#/definitions/responses.FailureResponse'
+        "500":
+          description: If the user could not be deleted it will return a 500 code.
+            Please report this error if you encounter it in production
+          schema:
+            $ref: '#/definitions/responses.FailureResponse'
+      tags:
+      - User
+    get:
+      consumes:
+      - application/json
+      description: Retrieve an user by id
+      parameters:
+      - description: Access token with Bearer prefix
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: User's id
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: If the response is successful you will receive the requested
+            user inside the data key
+          schema:
+            allOf:
+            - $ref: '#/definitions/responses.CorrectResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.User'
+              type: object
+        "400":
+          description: If no token is provided the API will answer with a 400 code
+          schema:
+            $ref: '#/definitions/responses.FailureResponse'
+        "403":
+          description: The API can answer with a 403 if the token is invalid/malformed
+            or the user has not verified their email yet
+          schema:
+            $ref: '#/definitions/responses.FailureResponse'
+        "404":
+          description: If the if the user could not be found it will return a 404
+            code
+          schema:
+            $ref: '#/definitions/responses.FailureResponse'
+      tags:
+      - User
+    put:
+      consumes:
+      - application/json
+      description: Update an user by id
+      parameters:
+      - description: Access token with Bearer prefix
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: User's id
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: Fields to edit. Every field is optional. If the user is not an
+          admin isActive and role are ignored
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/v1_user_handler.UpdateUserBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: If the response is successful you will receive a simple code
+            and message indicating that the user has been edited
+          schema:
+            $ref: '#/definitions/responses.CorrectResponse'
+        "400":
+          description: If no token is provided the API will answer with a 400 code
+          schema:
+            $ref: '#/definitions/responses.FailureResponse'
+        "403":
+          description: The API can answer with a 403 if the token is invalid/malformed.
+            the user has not verified their email yet or (if the user is trying to
+            edit other than self) the user is not an admin
+          schema:
+            $ref: '#/definitions/responses.FailureResponse'
+        "404":
+          description: If the user could not be found it will return a 404 code
+          schema:
+            $ref: '#/definitions/responses.FailureResponse'
+        "500":
+          description: If the user could not be edited it will return a 500 code.
+            Please report this error if you encounter it in production
+          schema:
+            $ref: '#/definitions/responses.FailureResponse'
+      tags:
+      - User
 schemes:
 - http
 - https

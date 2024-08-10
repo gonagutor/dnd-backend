@@ -412,11 +412,326 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/v1/user/": {
+            "get": {
+                "description": "Retrieve an user by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Access token with Bearer prefix",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page to show",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page size",
+                        "name": "pageSize",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "If the response is successful you will receive the requested user inside the data key",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.CorrectResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/models.User"
+                                            }
+                                        },
+                                        "pagination": {
+                                            "$ref": "#/definitions/responses.Pagination"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "If no token is provided the API will answer with a 400 code",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "The API can answer with a 403 if the token is invalid/malformed. the user has not verified their email yet or the user is not an admin",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "If the if the user could not be found it will return a 404 code",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/user/{user_id}": {
+            "get": {
+                "description": "Retrieve an user by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Access token with Bearer prefix",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "User's id",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "If the response is successful you will receive the requested user inside the data key",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.CorrectResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.User"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "If no token is provided the API will answer with a 400 code",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "The API can answer with a 403 if the token is invalid/malformed or the user has not verified their email yet",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "If the if the user could not be found it will return a 404 code",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update an user by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Access token with Bearer prefix",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "User's id",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Fields to edit. Every field is optional. If the user is not an admin isActive and role are ignored",
+                        "name": "Body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1_user_handler.UpdateUserBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "If the response is successful you will receive a simple code and message indicating that the user has been edited",
+                        "schema": {
+                            "$ref": "#/definitions/responses.CorrectResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "If no token is provided the API will answer with a 400 code",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "The API can answer with a 403 if the token is invalid/malformed. the user has not verified their email yet or (if the user is trying to edit other than self) the user is not an admin",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "If the user could not be found it will return a 404 code",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "If the user could not be edited it will return a 500 code. Please report this error if you encounter it in production",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete an user by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Access token with Bearer prefix",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "User's id",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "If the response is successful you will receive a simple code and message indicating that the user has been deleted",
+                        "schema": {
+                            "$ref": "#/definitions/responses.CorrectResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "If no token is provided the API will answer with a 400 code",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "The API can answer with a 403 if the token is invalid/malformed. the user has not verified their email yet or (if the user is trying to delete other than self) the user is not an admin",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "If the user could not be found it will return a 404 code",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "If the user could not be deleted it will return a 500 code. Please report this error if you encounter it in production",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "models.User": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string",
+                    "example": "gonagutor@gmail.com"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "568659d6-b4c5-4b4d-8a32-4202447b6f88"
+                },
+                "isActive": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Gonzalo"
+                },
+                "profilePicture": {
+                    "type": "string",
+                    "example": "https://picsum.photos/200/300"
+                },
+                "role": {
+                    "type": "string",
+                    "example": "user"
+                },
+                "surname": {
+                    "type": "string",
+                    "example": "Aguado Torres"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
         "responses.CorrectResponse": {
-            "description": "Action code and readable message. Data is optional",
+            "description": "Action code and readable message. Data and Pagination is optional",
             "type": "object",
             "properties": {
                 "code": {
@@ -436,6 +751,23 @@ const docTemplate = `{
                 },
                 "message": {
                     "type": "string"
+                }
+            }
+        },
+        "responses.Pagination": {
+            "type": "object",
+            "properties": {
+                "maxPage": {
+                    "type": "integer",
+                    "example": 4
+                },
+                "page": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "example": 25
                 }
             }
         },
@@ -560,6 +892,31 @@ const docTemplate = `{
                 "surname": {
                     "type": "string",
                     "maxLength": 64,
+                    "example": "Aguado Torres"
+                }
+            }
+        },
+        "v1_user_handler.UpdateUserBody": {
+            "type": "object",
+            "properties": {
+                "isActive": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Gonzalo"
+                },
+                "profilePicture": {
+                    "type": "string",
+                    "example": "https://picsum.photos/200/300"
+                },
+                "role": {
+                    "type": "string",
+                    "example": "user"
+                },
+                "surname": {
+                    "type": "string",
                     "example": "Aguado Torres"
                 }
             }
