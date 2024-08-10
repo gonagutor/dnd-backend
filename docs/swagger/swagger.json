@@ -5,12 +5,12 @@
     ],
     "swagger": "2.0",
     "info": {
-        "description": "This is the API for https://dnd.gonagutor.com. This API handles content from the DND books, characters, campaigns and users",
+        "description": "This is the API for https://dnd.gonagutor.com. This API handles content from the DND books, characters, campaigns and users. \u003cbr/\u003e\u003cbr/\u003eBuilt by **Sergio Ballesteros Cedenilla** \u003cserbalced@gmail.com\u003e and **Gonzalo Aguado Torres** \u003cgonagutor@gmail.com\u003e",
         "title": "DND Api",
         "contact": {
-            "name": "Gonzalo Aguado Torres",
+            "name": "DNDmin Support",
             "url": "https://dnd.gonagutor.com/support",
-            "email": "gonagutor@gmail.com"
+            "email": "contact@dnd.gonagutor.com"
         },
         "license": {
             "name": "Apache 2.0",
@@ -924,6 +924,10 @@
         {
             "description": "The auth system uses an access token that expires every 15 minutes and a refresh token",
             "name": "Auth"
+        },
+        {
+            "description": "User management endpoints",
+            "name": "User"
         }
     ]
 }

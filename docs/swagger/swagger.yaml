@@ -167,11 +167,12 @@ definitions:
 host: localhost:8080
 info:
   contact:
-    email: gonagutor@gmail.com
-    name: Gonzalo Aguado Torres
+    email: contact@dnd.gonagutor.com
+    name: DNDmin Support
     url: https://dnd.gonagutor.com/support
   description: This is the API for https://dnd.gonagutor.com. This API handles content
-    from the DND books, characters, campaigns and users
+    from the DND books, characters, campaigns and users. <br/><br/>Built by **Sergio
+    Ballesteros Cedenilla** <serbalced@gmail.com> and **Gonzalo Aguado Torres** <gonagutor@gmail.com>
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
@@ -660,3 +661,5 @@ tags:
 - description: The auth system uses an access token that expires every 15 minutes
     and a refresh token
   name: Auth
+- description: User management endpoints
+  name: User

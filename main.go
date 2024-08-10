@@ -63,7 +63,7 @@ func AutoMigrateAll() {
 
 // @title DND Api
 // @version 1.0
-// @description This is the API for https://dnd.gonagutor.com. This API handles content from the DND books, characters, campaigns and users
+// @description This is the API for https://dnd.gonagutor.com. This API handles content from the DND books, characters, campaigns and users. <br/><br/>Built by **Sergio Ballesteros Cedenilla** <serbalced@gmail.com> and **Gonzalo Aguado Torres** <gonagutor@gmail.com>
 // @host localhost:8080
 // @BasePath /
 // @schemes http https
@@ -71,9 +71,12 @@ func AutoMigrateAll() {
 // @tag.name Auth
 // @tag.description The auth system uses an access token that expires every 15 minutes and a refresh token
 
-// @contact.name   Gonzalo Aguado Torres
+// @tag.name User
+// @tag.description User management endpoints
+
+// @contact.name   DNDmin Support
 // @contact.url    https://dnd.gonagutor.com/support
-// @contact.email  gonagutor@gmail.com
+// @contact.email  contact@dnd.gonagutor.com
 
 // @license.name  Apache 2.0
 // @license.url   http://www.apache.org/licenses/LICENSE-2.0.html

@@ -10,9 +10,9 @@ const docTemplate = `{
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
         "contact": {
-            "name": "Gonzalo Aguado Torres",
+            "name": "DNDmin Support",
             "url": "https://dnd.gonagutor.com/support",
-            "email": "gonagutor@gmail.com"
+            "email": "contact@dnd.gonagutor.com"
         },
         "license": {
             "name": "Apache 2.0",
@@ -926,6 +926,10 @@ const docTemplate = `{
         {
             "description": "The auth system uses an access token that expires every 15 minutes and a refresh token",
             "name": "Auth"
+        },
+        {
+            "description": "User management endpoints",
+            "name": "User"
         }
     ]
 }`
@@ -937,7 +941,7 @@ var SwaggerInfo = &swag.Spec{
 	BasePath:         "/",
 	Schemes:          []string{"http", "https"},
 	Title:            "DND Api",
-	Description:      "This is the API for https://dnd.gonagutor.com. This API handles content from the DND books, characters, campaigns and users",
+	Description:      "This is the API for https://dnd.gonagutor.com. This API handles content from the DND books, characters, campaigns and users. <br/><br/>Built by **Sergio Ballesteros Cedenilla** <serbalced@gmail.com> and **Gonzalo Aguado Torres** <gonagutor@gmail.com>",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",
