@@ -1,4 +1,4 @@
-package auth
+package v1_auth_handlers
 
 import (
 	"dnd/backend/constants/http_codes"
@@ -54,6 +54,16 @@ func redeemRecoveryCodePrechecks(ctx *fiber.Ctx, id string) (*models.User, error
 	return user, nil
 }
 
+//	@Tags					Auth
+//  @Description	Uses the provided token to change the user's password
+//	@Accept				json
+//	@Produce			json
+//  @Param				Body	body	RedeemRecoveryCodeRequest	true	"The received token and the new password"
+//  @Success			200	{object}	responses.CorrectResponse	"If the response is successful you will receive simple code and message indicating that the passworc has been changed"
+//  @Failure			400	{object}	responses.FailureResponse	"If a field is missing or the body couldn't be parsed the API will answer with a 400 code. In case a field is missing or has the incorrect format it will return the field which fails"
+//  @Failure			403	{object}	responses.FailureResponse	"The API can answer with a 403 if the token has expired or is invalid"
+//  @Failure			500	{object}	responses.FailureResponse	"If the hashed password could not be generated it will return a 500 code. Please report this error if you encounter it in production"
+//  @Router 		/v1/auth/recover-password [post]
 func RedeemRecoveryCode(ctx *fiber.Ctx) error {
 	recoveryData, validationResponseError := validateAndParseRedeemRecoveryCodeParams(ctx)
 	if recoveryData == nil {

@@ -1,0 +1,8 @@
+package http_codes
+
+const (
+	USER_FOUND = "USER_FOUND"
+	USER_DELETED = "USER_DELETED"
+	USER_EDITED = "USER_EDITED"
+	USERS_FOUND = "USERS_FOUND"
+)

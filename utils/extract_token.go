@@ -9,7 +9,11 @@ import (
 
 func ExtractToken(ctx *fiber.Ctx) (string, error) {
 	authorization := ctx.GetReqHeaders()["Authorization"]
-	authorizationContent := strings.Split(authorization, " ")
+	if len(authorization) < 1 {
+		return "", errors.New("no authorization header provided");
+	}
+
+	authorizationContent := strings.Split(authorization[0], " ")
 	if len(authorizationContent) != 2 {
 		return "", errors.New("token not provided or malformed")
 	}

@@ -12,21 +12,21 @@ import (
 )
 
 type User struct {
-	gorm.Model
+  gorm.Model `swaggerignore:"true"`
 
-	ID             uuid.UUID `gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
-	Email          string    `gorm:"type:varchar(256);not null"`
-	Name           string    `gorm:"type:varchar(32);not null"`
-	Surname        string    `gorm:"type:varchar(64);not null"`
-	Password       string    `gorm:"type:varchar(128);not null"`
-	Role           string    `gorm:"type:varchar(16);not null;default:user"`
-	ProfilePicture string    `gorm:"default:null"`
-	RefreshKey     string    `gorm:"type:varchar(16);not null"`
-	IsActive       bool      `gorm:"not null;default:false"`
+  ID             uuid.UUID `gorm:"type:uuid;primary_key;default:gen_random_uuid()" example:"568659d6-b4c5-4b4d-8a32-4202447b6f88" json:"id"`
+  Email          string    `gorm:"type:varchar(256);not null" example:"gonagutor@gmail.com" json:"email"`
+  Name           string    `gorm:"type:varchar(32);not null" example:"Gonzalo" json:"name"`
+  Surname        string    `gorm:"type:varchar(64);not null" example:"Aguado Torres" json:"surname"`
+  Password       string    `gorm:"type:varchar(128);not null" swaggerignore:"true"`
+  Role           string    `gorm:"type:varchar(16);not null;default:user" example:"user" json:"role"`
+  ProfilePicture string    `gorm:"default:null" example:"https://picsum.photos/200/300" json:"profilePicture"`
+  RefreshKey     string    `gorm:"type:varchar(16);not null" swaggerignore:"true"`
+  IsActive       bool      `gorm:"not null;default:false" example:"true" json:"isActive"`
 
-	DeletedAt *time.Time `gorm:"default:null"`
-	CreatedAt *time.Time `gorm:"not null;default:current_timestamp"`
-	UpdatedAt *time.Time `gorm:"not null;default:current_timestamp"`
+  DeletedAt *time.Time `gorm:"default:null" swaggerignore:"true"`
+  CreatedAt *time.Time `gorm:"not null;default:current_timestamp" json:"createdAt"`
+  UpdatedAt *time.Time `gorm:"not null;default:current_timestamp" json:"updatedAt"`
 }
 
 func (user *User) BeforeCreate(tx *gorm.DB) error {
@@ -70,9 +70,20 @@ func (user *User) CheckKey(key string) error {
 }
 
 func GetAllUsers(ctx *fiber.Ctx) ([]User, error) {
+	key := ctx.Query("key")
+	if key == "" {
+		key = "created_at"
+	}
+
+	sortOrder := ctx.Query("sortOrder")
+	if sortOrder == "" {
+		sortOrder = "DESC"
+	}
+
+	order := key + " " + sortOrder
 	var users []User
 
-	err := utils.Paginate(ctx).Omit("password", "refresh_key").Find(&users)
+	err := utils.Paginate(ctx).Omit("password", "refresh_key").Order(order).Find(&users)
 	if err.Error != nil {
 		return nil, err.Error
 	}
@@ -94,9 +105,6 @@ func UserExistsByID(id string) bool {
 
 	var count int64 = 0
 	utils.PGConnection.First(&User{ID: idParsed}).Count(&count)
-	if count == 0 {
-		return false
-	}
 
-	return true
+	return count != 0
 }

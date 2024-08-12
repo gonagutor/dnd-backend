@@ -2,19 +2,23 @@ package handlers
 
 import "github.com/gofiber/fiber/v2"
 
+var authRoutes = fiber.Map{
+	"login":                    "/v1/login",
+	"register":                 "/v1/register",
+	"refresh":                  "/v1/refresh",
+	"revoke":                   "/v1/revoke",
+	"recover-password-request": "/v1/recover-password-request",
+	"recover-password":         "/v1/recover-password",
+	"validate-email":           "/v1/validate-email",
+}
+
 var v1Routes = fiber.Map{
 	"index": "/v1/",
+	"auth": authRoutes,
 }
 
 var routes = fiber.Map{
-	"login":                    "/login",
-	"register":                 "/register",
-	"refresh":                  "/refresh",
-	"revoke":                   "/revoke",
-	"recover_password_request": "/recover-password-request",
-	"recover_password":         "/recover-password",
-	"validate_email":           "/validate-email",
-	"v1":                       v1Routes,
+	"v1": v1Routes,
 }
 
 func APIIndex(ctx *fiber.Ctx) error {

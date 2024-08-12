@@ -10,5 +10,7 @@ func SetupVersionedRoutes(app *fiber.App) {
 	v1 := app.Group("/v1")
 	v1.Get("/", handlers.V1Index)
 
-	SetupItemRoutes(v1)
+	SetupAuthRoutes(v1)
+	SetupUserRoutes(v1)
+  SetupItemRoutes(v1)
 }
