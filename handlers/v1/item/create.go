@@ -1,16 +1,17 @@
 package v1_item_handler
 
 import (
-	"dnd/backend/constants/http_codes"
-	"dnd/backend/errors/http_errors"
-	"dnd/backend/middleware/protected"
-	"dnd/backend/models"
-	"dnd/backend/utils"
 	"errors"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/lib/pq"
+
+	"dnd/backend/constants/http_codes"
+	"dnd/backend/errors/http_errors"
+	"dnd/backend/middleware/protected"
+	"dnd/backend/models"
+	"dnd/backend/utils"
 )
 
 type ItemBody struct {
@@ -31,10 +32,21 @@ type ItemBody struct {
 	Combat   models.Combat  `json:"combat"`
 }
 
+//			@Tags User
+//		 	@Description Create a new item
+//		 	@Accept json
+//		 	@Produce 			json
+//		 	@Param				Authorization	header	string	true	"Access token with Bearer prefix"
+//		 	@Success			200	{object}	responses.CorrectResponse "If the response is successful you will receive a simple code and message indicating that the item has been created"
+//		 	@Failure			400	{object}	responses.FailureResponse "If the request is malformed or the data is invalid"
+//			@Failure			400	{object}	responses.FailureResponse	"If no token is provided the API will answer with a 400 code"
+//	 	@Failure			403	{object}	responses.FailureResponse "The API can answer with a 403 if the token is invalid/malformed or the user has not verified their email yet"
+//	 	@Failure			500	{object}	responses.FailureResponse "If the server fails to create the item it will answer with a 500 code. Please report this error if you encounter it in production"
+//	   @Router				/v1/item/create [post]
 func Create(ctx *fiber.Ctx) error {
 	item, err := parseAndValidate(ctx)
 	if err != nil {
-		return ctx.Status(fiber.StatusForbidden).JSON(fiber.Map{
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error":   http_errors.INVALID_DATA,
 			"message": err,
 		})
@@ -42,7 +54,7 @@ func Create(ctx *fiber.Ctx) error {
 
 	creationError := utils.PGConnection.Create(item).Error
 	if creationError != nil {
-		return ctx.Status(fiber.StatusForbidden).JSON(fiber.Map{
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error":   http_errors.COULD_NOT_CREATE_ITEM,
 			"message": "Could not create item",
 		})
@@ -58,7 +70,7 @@ func parseAndValidate(ctx *fiber.Ctx) (*models.Item, error) {
 	itemBody := new(ItemBody)
 	err := ctx.BodyParser(itemBody)
 	if err != nil {
-		return nil, errors.New("Error parsing the body")
+		return nil, errors.New("error parsing the body")
 	}
 
 	user := protected.GetUserFromContext(ctx)
