@@ -1,0 +1,8 @@
+package http_codes
+
+const (
+	ITEM_CREATED = "ITEM_CREATED"
+	ITEM_EDITED  = "ITEM_EDITED"
+	ITEM_DELETED = "ITEM_DELETED"
+	ITEMS_FOUND  = "ITEMS_FOUND"
+)

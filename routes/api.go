@@ -12,4 +12,5 @@ func SetupVersionedRoutes(app *fiber.App) {
 
 	SetupAuthRoutes(v1)
 	SetupUserRoutes(v1)
+  SetupItemRoutes(v1)
 }
