@@ -104,7 +104,7 @@ func Edit(ctx *fiber.Ctx) error {
 	err = utils.PGConnection.Save(&itemUrl).Error
 	if err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error":   http_errors.COULD_NOT_EDIT_USER,
+			"error":   http_errors.COULD_NOT_EDIT_ITEM,
 			"message": "Item could not be edited",
 		})
 	}
