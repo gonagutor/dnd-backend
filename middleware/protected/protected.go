@@ -46,7 +46,7 @@ func New(config Config) fiber.Handler {
 		user, errorFindingUser := models.FindUserByID(id)
 		if errorFindingUser != nil {
 			return ctx.Status(fiber.StatusForbidden).JSON(fiber.Map{
-				"error":   http_errors.BAD_REFRESH_TOKEN,
+				"error":   http_errors.BAD_ACCESS_TOKEN,
 				"message": "User no longer exists",
 			})
 		}
