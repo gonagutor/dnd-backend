@@ -91,6 +91,22 @@ func GetAllItems(ctx *fiber.Ctx) ([]Item, error) {
 	return items, nil
 }
 
+func GetItemsFromUser(user uuid.UUID) ([]Item, error) {
+	var items []Item
+	err := utils.PGConnection.Where("user = ? OR user IS NULL", user).Find(&items).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return items, nil
+}
+
+func CountItems() int64 {
+	var count int64
+	utils.PGConnection.Model(&Item{}).Count(&count)
+	return count
+}
+
 func (i *Item) Validate() error {
 	item, _ := FindItemByID(i.ID)
 	if item != nil {

@@ -8,7 +8,6 @@ import (
 	"dnd/backend/middleware/protected"
 	"dnd/backend/models"
 	"dnd/backend/utils"
-
 )
 
 // @Tags Item
@@ -18,10 +17,13 @@ import (
 // @Param Authorization header string true "Access token with Bearer prefix"
 // @Param item_id path string true "The id of the item you want to delete"
 // @Success 200 {object} responses.CorrectResponse "If the response is successful you will receive a simple code and message indicating that the item has been deleted"
-//  @Failure			400	{object}	responses.FailureResponse	"If no token is provided the API will answer with a 400 code"
-//  @Failure			403	{object}	responses.FailureResponse "The API can answer with a 403 if the token is invalid/malformed. the user has not verified their email yet or (if the user is trying to delete public items) the user is not an admin"
+//
+//	@Failure			400	{object}	responses.FailureResponse	"If no token is provided the API will answer with a 400 code"
+//	@Failure			403	{object}	responses.FailureResponse "The API can answer with a 403 if the token is invalid/malformed. the user has not verified their email yet or (if the user is trying to delete public items) the user is not an admin"
+//
 // @Failure 404 {object} responses.FailureResponse "If the item is not found the API will answer with a 404 code"
 // @Failure 500 {object} responses.FailureResponse "If the server fails to delete the item it will answer with a 500 code. Please report this error if you encounter it in production"
+// @Router /v1/item/{item_id} [delete]
 func Delete(ctx *fiber.Ctx) error {
 	itemId := ctx.Params("item_id")
 	itemUrl, err := models.FindItemByID(itemId)

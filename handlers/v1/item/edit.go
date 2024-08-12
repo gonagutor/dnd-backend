@@ -10,7 +10,6 @@ import (
 	"dnd/backend/middleware/protected"
 	"dnd/backend/models"
 	"dnd/backend/utils"
-
 )
 
 type EditCost struct {
@@ -64,7 +63,7 @@ type EditItemBody struct {
 // @Failure 403 {object} responses.FailureResponse "The API can answer with a 403 if the token is invalid/malformed, the user has not verified their email yet or (if the user is trying to edit a public item) the user is not an admin"
 // @Failure 404 {object} responses.FailureResponse "If the item is not found"
 // @Failure 500 {object} responses.FailureResponse "If the server fails to edit the item it will answer with a 500 code. Please report this error if you encounter it in production"
-// @Router /v1/item/edit/{item_id} [put]
+// @Router /v1/item/{item_id} [put]
 func Edit(ctx *fiber.Ctx) error {
 	editItem := new(EditItemBody)
 	err := ctx.BodyParser(editItem)
