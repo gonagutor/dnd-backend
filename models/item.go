@@ -1,16 +1,18 @@
 package models
 
 import (
-	"dnd/backend/utils"
 	"errors"
 	"regexp"
 	"strings"
 	"unicode"
 
+	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/lib/pq"
 	"gorm.io/gorm"
+
+	"dnd/backend/utils"
 )
 
 type TranslatableField map[string]string
@@ -65,6 +67,28 @@ func FindItemByID(id string) (*Item, error) {
 	}
 
 	return ret, nil
+}
+
+func GetAllItems(ctx *fiber.Ctx) ([]Item, error) {
+	key := ctx.Query("key")
+	if key == "" {
+		key = "id"
+	}
+
+	sortOrder := ctx.Query("sortOrder")
+	if sortOrder == "" {
+		sortOrder = "DESC"
+	}
+
+	order := key + " " + sortOrder
+	var items []Item
+
+	err := utils.Paginate(ctx).Order(order).Find(&items).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return items, nil
 }
 
 func (i *Item) Validate() error {

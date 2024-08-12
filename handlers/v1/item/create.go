@@ -32,11 +32,12 @@ type ItemBody struct {
 	Combat   models.Combat  `json:"combat"`
 }
 
-//			@Tags User
+//			@Tags Item
 //		 	@Description Create a new item
 //		 	@Accept json
 //		 	@Produce 			json
 //		 	@Param				Authorization	header	string	true	"Access token with Bearer prefix"
+//		 	@Param				body			body	ItemBody	true	"The body of the item you want to create"
 //		 	@Success			200	{object}	responses.CorrectResponse "If the response is successful you will receive a simple code and message indicating that the item has been created"
 //		 	@Failure			400	{object}	responses.FailureResponse "If the request is malformed or the data is invalid"
 //			@Failure			400	{object}	responses.FailureResponse	"If no token is provided the API will answer with a 400 code"
