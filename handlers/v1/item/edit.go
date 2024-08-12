@@ -1,6 +1,8 @@
 package v1_item_handler
 
 import (
+	"cmp"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/lib/pq"
@@ -114,72 +116,34 @@ func Edit(ctx *fiber.Ctx) error {
 }
 
 func editItemAndValidate(item *models.Item, editItem *EditItemBody) error {
-	if editItem.Name != nil {
-		item.Name = *editItem.Name
-	}
-	if editItem.Description != nil {
-		item.Description = *editItem.Description
-	}
+	item.Name = cmp.Or(item.Name, *editItem.Name)
+	item.Description = cmp.Or(item.Description, *editItem.Description)
 
-	if editItem.Source != nil {
-		item.Source = *editItem.Source
-	}
-	if editItem.Page != nil {
-		item.Page = editItem.Page
-	}
+	item.Source = cmp.Or(item.Source, *editItem.Source)
+	item.Page = cmp.Or(item.Page, editItem.Page)
 
 	if editItem.Tags != nil {
 		item.Tags = *editItem.Tags
 	}
-	if editItem.Rarity != nil {
-		item.Rarity = *editItem.Rarity
-	}
-	if editItem.Weight != nil {
-		item.Weight = *editItem.Weight
-	}
-	if editItem.Atunement != nil {
-		item.Atunement = *editItem.Atunement
-	}
+	item.Rarity = cmp.Or(item.Rarity, *editItem.Rarity)
+	item.Weight = cmp.Or(item.Weight, *editItem.Weight)
+	item.Atunement = cmp.Or(item.Atunement, *editItem.Atunement)
 
-	if editItem.Cost != nil {
-		if editItem.Cost.Copper != nil {
-			item.Cost.Copper = *editItem.Cost.Copper
-		}
-		if editItem.Cost.Electrum != nil {
-			item.Cost.Electrum = *editItem.Cost.Electrum
-		}
-		if editItem.Cost.Gold != nil {
-			item.Cost.Gold = *editItem.Cost.Gold
-		}
-		if editItem.Cost.Silver != nil {
-			item.Cost.Silver = *editItem.Cost.Silver
-		}
-		if editItem.Cost.Platinum != nil {
-			item.Cost.Platinum = *editItem.Cost.Platinum
-		}
-	}
+	item.Cost.Copper = cmp.Or(item.Cost.Copper, *editItem.Cost.Copper)
+	item.Cost.Electrum = cmp.Or(item.Cost.Electrum, *editItem.Cost.Electrum)
+	item.Cost.Gold = cmp.Or(item.Cost.Gold, *editItem.Cost.Gold)
+	item.Cost.Silver = cmp.Or(item.Cost.Silver, *editItem.Cost.Silver)
+	item.Cost.Platinum = cmp.Or(item.Cost.Platinum, *editItem.Cost.Platinum)
 
 	if editItem.Contains != nil {
 		item.Contains = *editItem.Contains
 	}
 
-	if editItem.Combat.Damage != nil {
-		if editItem.Combat.Damage.Count != nil {
-			item.Combat.Damage.Count = *editItem.Combat.Damage.Count
-		}
-		if editItem.Combat.Damage.Faces != nil {
-			item.Combat.Damage.Faces = *editItem.Combat.Damage.Faces
-		}
-		if editItem.Combat.Damage.Range != nil {
-			item.Combat.Damage.Range = *editItem.Combat.Damage.Range
-		}
-		if editItem.Combat.Damage.Type != nil {
-			item.Combat.Damage.Type = *editItem.Combat.Damage.Type
-		}
-	}
-	if editItem.Combat.Ac != nil {
-		item.Combat.Ac = *editItem.Combat.Ac
-	}
+	item.Combat.Damage.Count = cmp.Or(item.Combat.Damage.Count, *editItem.Combat.Damage.Count)
+	item.Combat.Damage.Faces = cmp.Or(item.Combat.Damage.Faces, *editItem.Combat.Damage.Faces)
+	item.Combat.Damage.Range = cmp.Or(item.Combat.Damage.Range, *editItem.Combat.Damage.Range)
+	item.Combat.Damage.Type = cmp.Or(item.Combat.Damage.Type, *editItem.Combat.Damage.Type)
+	item.Combat.Ac = cmp.Or(item.Combat.Ac, *editItem.Combat.Ac)
 
 	return item.Validate()
 }
