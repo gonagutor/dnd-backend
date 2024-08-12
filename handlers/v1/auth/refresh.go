@@ -1,4 +1,4 @@
-package auth
+package v1_auth_handlers
 
 import (
 	"dnd/backend/constants/http_codes"
@@ -9,6 +9,10 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 )
+
+type RefreshResponse struct {
+	AccessToken string `example:"" format:"jwt"`
+}
 
 func refreshPrechecks(ctx *fiber.Ctx, refreshToken string) (*models.User, error) {
 	userId, key, errorValidatingToken := auth_utils.ValidateRefreshToken(refreshToken)
@@ -35,6 +39,15 @@ func refreshPrechecks(ctx *fiber.Ctx, refreshToken string) (*models.User, error)
 	return user, nil
 }
 
+//	@Tags					Auth
+//  @Description	Uses the refresh token in the header to generate a new access token for the user
+//	@Produce			json
+//  @Param				Authorization	header	string	true	"Refresh token with Bearer prefix"
+//  @Success			200	{object}	responses.CorrectResponse{data=RefreshResponse}	"If the response is successful you will receive the new accessToken inside the data field of the response"
+//  @Failure			400	{object}	responses.FailureResponse	"If no token is provided the API will answer with a 400 code"
+//  @Failure			403	{object}	responses.FailureResponse	"The API can answer with a 403 if the token has expired or is invalid"
+//  @Failure			500	{object}	responses.FailureResponse	"If the new token could not be generated it will return a 500 code. Please report this error if you encounter it in production"
+//  @Router 		/v1/auth/refresh [post]
 func Refresh(ctx *fiber.Ctx) error {
 	refreshToken, err := utils.ExtractToken(ctx)
 	if err != nil {

@@ -12,21 +12,21 @@ import (
 )
 
 type User struct {
-	gorm.Model
+  gorm.Model `swaggerignore:"true"`
 
-	ID             uuid.UUID `gorm:"type:uuid;primary_key;default:gen_random_uuid()" json:"id"`
-	Email          string    `gorm:"type:varchar(256);not null" json:"email"`
-	Name           string    `gorm:"type:varchar(32);not null" json:"name"`
-	Surname        string    `gorm:"type:varchar(64);not null" json:"surname"`
-	Password       string    `gorm:"type:varchar(128);not null"`
-	Role           string    `gorm:"type:varchar(16);not null;default:user" json:"role"`
-	ProfilePicture string    `gorm:"default:null" json:"profilePicture"`
-	RefreshKey     string    `gorm:"type:varchar(16);not null" json:"refreshKey"`
-	IsActive       bool      `gorm:"not null;default:false" json:"isActive"`
+  ID             uuid.UUID `gorm:"type:uuid;primary_key;default:gen_random_uuid()" example:"568659d6-b4c5-4b4d-8a32-4202447b6f88" json:"id"`
+  Email          string    `gorm:"type:varchar(256);not null" example:"gonagutor@gmail.com" json:"email"`
+  Name           string    `gorm:"type:varchar(32);not null" example:"Gonzalo" json:"name"`
+  Surname        string    `gorm:"type:varchar(64);not null" example:"Aguado Torres" json:"surname"`
+  Password       string    `gorm:"type:varchar(128);not null" swaggerignore:"true"`
+  Role           string    `gorm:"type:varchar(16);not null;default:user" example:"user" json:"role"`
+  ProfilePicture string    `gorm:"default:null" example:"https://picsum.photos/200/300" json:"profilePicture"`
+  RefreshKey     string    `gorm:"type:varchar(16);not null" swaggerignore:"true"`
+  IsActive       bool      `gorm:"not null;default:false" example:"true" json:"isActive"`
 
-	DeletedAt *time.Time `gorm:"default:null" json:"deletedAt"`
-	CreatedAt *time.Time `gorm:"not null;default:current_timestamp" json:"createdAt"`
-	UpdatedAt *time.Time `gorm:"not null;default:current_timestamp" json:"updatedAt"`
+  DeletedAt *time.Time `gorm:"default:null" swaggerignore:"true"`
+  CreatedAt *time.Time `gorm:"not null;default:current_timestamp" json:"createdAt"`
+  UpdatedAt *time.Time `gorm:"not null;default:current_timestamp" json:"updatedAt"`
 }
 
 func (user *User) BeforeCreate(tx *gorm.DB) error {
@@ -105,9 +105,6 @@ func UserExistsByID(id string) bool {
 
 	var count int64 = 0
 	utils.PGConnection.First(&User{ID: idParsed}).Count(&count)
-	if count == 0 {
-		return false
-	}
 
-	return true
+	return count != 0
 }

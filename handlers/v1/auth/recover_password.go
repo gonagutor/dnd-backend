@@ -1,4 +1,4 @@
-package auth
+package v1_auth_handlers
 
 import (
 	"dnd/backend/constants/http_codes"
@@ -12,7 +12,7 @@ import (
 )
 
 type RecoverPasswordRequest struct {
-	Email string `json:"email" validate:"required,email"`
+	Email string `json:"email" validate:"required,email" example:"john@doe.com" format:"email"`
 }
 
 func validateAndParseRecoverPasswordBody(ctx *fiber.Ctx) (*RecoverPasswordRequest, error) {
@@ -51,6 +51,17 @@ func recoverPasswordPrechecks(ctx *fiber.Ctx, body *RecoverPasswordRequest) (*mo
 	return user, nil
 }
 
+//	@Tags					Auth
+//  @Description	Uses the provided email to send a password recovery email
+//	@Accept				json
+//	@Produce			json
+//  @Param				Body	body	RecoverPasswordRequest	true	"Email inside json body"
+//  @Success			200	{object}	responses.CorrectResponse	"If the response is successful you will receive simple code and message indicating that the email has been sent"
+//  @Failure			400	{object}	responses.FailureResponse	"If a field is missing or the body couldn't be parsed the API will answer with a 400 code. In case a field is missing or has the incorrect format it will return the field which fails"
+//  @Failure			403	{object}	responses.FailureResponse	"The API can answer with a 403 if the email doesn't exist or if the user has not verified their email"
+//  @Failure			500	{object}	responses.FailureResponse	"If the token could not be generated it will return a 500 code. Please report this error if you encounter it in production"
+//  @Failure			502	{object}	responses.FailureResponse	"If nothing failed but the email could not be sent the server will return a 502 code. Please report this error if you encounter it in production"
+//  @Router 		/v1/auth/recover-password-request [post]
 func RecoverPassword(ctx *fiber.Ctx) error {
 	recoverPassword, validationResponseError := validateAndParseRecoverPasswordBody(ctx)
 	if recoverPassword == nil {
@@ -64,7 +75,7 @@ func RecoverPassword(ctx *fiber.Ctx) error {
 
 	recoverToken, err := auth_utils.GenerateRecoverToken(user.ID.String())
 	if err != nil {
-		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error":   http_errors.BAD_RECOVER_TOKEN,
 			"message": err.Error(),
 		})
