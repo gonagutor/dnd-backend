@@ -38,22 +38,22 @@ type Combat struct {
 }
 
 type Item struct {
-	gorm.Model
+	gorm.Model `swaggerignore:"true"`
 
 	ID          string            `gorm:"primary_key;not null" json:"id" bson:"id"`
-	Name        pgtype.JSONBCodec `gorm:"type:jsonb;not null" json:"name" bson:"name"`
-	Description pgtype.JSONBCodec `gorm:"type:jsonb;not null" json:"description" bson:"description"`
+	Name        pgtype.JSONBCodec `gorm:"type:jsonb;not null" json:"name" bson:"name" swaggertype:"object"`
+	Description pgtype.JSONBCodec `gorm:"type:jsonb;not null" json:"description" bson:"description" swaggertype:"object"`
 
 	Source string  `gorm:"not null" json:"source" bson:"source"`
 	Page   *uint16 `json:"page" bson:"page"`
 
-	Tags      pq.StringArray `gorm:"type:text;not null" json:"tags" bson:"tags"`
+	Tags      pq.StringArray `gorm:"type:text;not null" json:"tags" bson:"tags" swaggertype:"array,string"`
 	Rarity    uint8          `gorm:"not null" json:"rarity" bson:"rarity"`
 	Weight    float32        `gorm:"not null" json:"weight" bson:"weight"`
 	Atunement bool           `gorm:"not null" json:"atunement" bson:"atunement"`
 
 	Cost     Cost           `gorm:"type:jsonb;not null" json:"cost" bson:"cost"`
-	Contains pq.StringArray `gorm:"type:text;not null" json:"contains" bson:"contains"`
+	Contains pq.StringArray `gorm:"type:text;not null" json:"contains" bson:"contains" swaggertype:"array,string"`
 	Combat   Combat         `gorm:"type:jsonb;not null" json:"combat" bson:"combat"`
 
 	User *uuid.UUID `gorm:"type:text" json:"user" bson:"user"`

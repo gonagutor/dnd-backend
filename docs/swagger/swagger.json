@@ -411,6 +411,353 @@
                 }
             }
         },
+        "/v1/item/": {
+            "get": {
+                "description": "Get all items",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Item"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Access token with Bearer prefix",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "The page you want to retrieve",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "The size of the page you want to retrieve",
+                        "name": "pageSize",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "If the response is successful you will receive the items and pagination data",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.CorrectResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " pagination": {
+                                            "$ref": "#/definitions/responses.Pagination"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/models.Item"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "If no token is provided the API will answer with a 400 code",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "The API can answer with a 403 if the token is invalid/malformed, the user has not verified their email yet or its not an admin",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "If the server fails to get the items it will answer with a 500 code. Please report this error if you encounter it in production",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/item/create": {
+            "post": {
+                "description": "Create a new item",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Item"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Access token with Bearer prefix",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "The body of the item you want to create",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1_item_handler.ItemBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "If the response is successful you will receive a simple code and message indicating that the item has been created",
+                        "schema": {
+                            "$ref": "#/definitions/responses.CorrectResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "If no token is provided the API will answer with a 400 code",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "The API can answer with a 403 if the token is invalid/malformed or the user has not verified their email yet",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "If the server fails to create the item it will answer with a 500 code. Please report this error if you encounter it in production",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/item/{item_id}": {
+            "put": {
+                "description": "Edit an item",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Item"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Access token with Bearer prefix",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The id of the item you want to edit",
+                        "name": "item_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "The body of the item you want to edit",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1_item_handler.EditItemBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "If the response is successful you will receive a simple code and message indicating that the item has been edited",
+                        "schema": {
+                            "$ref": "#/definitions/responses.CorrectResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "If no token is provided the API will answer with a 400 code",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "The API can answer with a 403 if the token is invalid/malformed, the user has not verified their email yet or (if the user is trying to edit a public item) the user is not an admin",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "If the item is not found",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "If the server fails to edit the item it will answer with a 500 code. Please report this error if you encounter it in production",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete an item",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Item"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Access token with Bearer prefix",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The id of the item you want to delete",
+                        "name": "item_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "If the response is successful you will receive a simple code and message indicating that the item has been deleted",
+                        "schema": {
+                            "$ref": "#/definitions/responses.CorrectResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "If no token is provided the API will answer with a 400 code",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "The API can answer with a 403 if the token is invalid/malformed. the user has not verified their email yet or (if the user is trying to delete public items) the user is not an admin",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "If the item is not found the API will answer with a 404 code",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "If the server fails to delete the item it will answer with a 500 code. Please report this error if you encounter it in production",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/item/{user_id}": {
+            "get": {
+                "description": "Get all items",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Item"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Access token with Bearer prefix",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "The page you want to retrieve",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "The size of the page you want to retrieve",
+                        "name": "pageSize",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "If the response is successful you will receive the items and pagination data",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.CorrectResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " pagination": {
+                                            "$ref": "#/definitions/responses.Pagination"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/models.Item"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "If no token is provided the API will answer with a 400 code",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "The API can answer with a 403 if the token is invalid/malformed, the user has not verified their email yet or (if its not an admin) its trying to access to other user's items",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "If the server fails to get the items it will answer with a 500 code. Please report this error if you encounter it in production",
+                        "schema": {
+                            "$ref": "#/definitions/responses.FailureResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/user/": {
             "get": {
                 "description": "Retrieve an user by id",
@@ -689,6 +1036,104 @@
         }
     },
     "definitions": {
+        "models.Combat": {
+            "type": "object",
+            "properties": {
+                "ac": {
+                    "type": "integer"
+                },
+                "damage": {
+                    "$ref": "#/definitions/models.Damage"
+                }
+            }
+        },
+        "models.Cost": {
+            "type": "object",
+            "properties": {
+                "copper": {
+                    "type": "integer"
+                },
+                "electrum": {
+                    "type": "integer"
+                },
+                "gold": {
+                    "type": "integer"
+                },
+                "platinum": {
+                    "type": "integer"
+                },
+                "silver": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.Damage": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "faces": {
+                    "type": "integer"
+                },
+                "range": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.Item": {
+            "type": "object",
+            "properties": {
+                "atunement": {
+                    "type": "boolean"
+                },
+                "combat": {
+                    "$ref": "#/definitions/models.Combat"
+                },
+                "contains": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "cost": {
+                    "$ref": "#/definitions/models.Cost"
+                },
+                "description": {
+                    "type": "object"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "object"
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "rarity": {
+                    "type": "integer"
+                },
+                "source": {
+                    "type": "string"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "user": {
+                    "type": "string"
+                },
+                "weight": {
+                    "type": "number"
+                }
+            }
+        },
         "models.User": {
             "type": "object",
             "properties": {
@@ -893,6 +1338,12 @@
                     "example": "Aguado Torres"
                 }
             }
+        },
+        "v1_item_handler.EditItemBody": {
+            "type": "object"
+        },
+        "v1_item_handler.ItemBody": {
+            "type": "object"
         },
         "v1_user_handler.UpdateUserBody": {
             "type": "object",
