@@ -2,7 +2,7 @@
 root = "."
 tmp_dir = "tmp"
 [build]
-  cmd = "(swag init --output docs/swagger --md docs) && (go build -o ./tmp/dnd.exe .)"
+  cmd = "(swag init --output docs/swagger --md docs --parseDependency) && (go build -o ./tmp/dnd.exe .)"
   bin = "./tmp/dnd.exe"
   delay = 1000 # ms
   exclude_dir = ["static", "tmp", "vendor", "docs"]

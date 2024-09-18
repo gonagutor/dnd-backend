@@ -92,6 +92,8 @@ definitions:
       updatedAt:
         type: string
     type: object
+  pgtype.JSONBCodec:
+    type: object
   responses.CorrectResponse:
     description: Action code and readable message. Data and Pagination is optional
     properties:
@@ -210,9 +212,98 @@ definitions:
     - password
     - surname
     type: object
+  v1_item_handler.EditCombat:
+    properties:
+      ac:
+        type: integer
+      damage:
+        $ref: '#/definitions/v1_item_handler.EditDamage'
+    type: object
+  v1_item_handler.EditCost:
+    properties:
+      copper:
+        type: integer
+      electrum:
+        type: integer
+      gold:
+        type: integer
+      platinum:
+        type: integer
+      silver:
+        type: integer
+    type: object
+  v1_item_handler.EditDamage:
+    properties:
+      count:
+        type: integer
+      faces:
+        type: integer
+      range:
+        type: integer
+      type:
+        type: integer
+    type: object
   v1_item_handler.EditItemBody:
+    properties:
+      atunement:
+        type: boolean
+      combat:
+        $ref: '#/definitions/v1_item_handler.EditCombat'
+      contains:
+        items:
+          type: string
+        type: array
+      cost:
+        $ref: '#/definitions/v1_item_handler.EditCost'
+      descriptom:
+        $ref: '#/definitions/pgtype.JSONBCodec'
+      id:
+        type: string
+      name:
+        $ref: '#/definitions/pgtype.JSONBCodec'
+      page:
+        type: integer
+      rarity:
+        type: integer
+      source:
+        type: string
+      tags:
+        items:
+          type: string
+        type: array
+      weight:
+        type: number
     type: object
   v1_item_handler.ItemBody:
+    properties:
+      atunement:
+        type: boolean
+      combat:
+        $ref: '#/definitions/models.Combat'
+      contains:
+        items:
+          type: string
+        type: array
+      cost:
+        $ref: '#/definitions/models.Cost'
+      descriptom:
+        $ref: '#/definitions/pgtype.JSONBCodec'
+      id:
+        type: string
+      name:
+        $ref: '#/definitions/pgtype.JSONBCodec'
+      page:
+        type: integer
+      rarity:
+        type: integer
+      source:
+        type: string
+      tags:
+        items:
+          type: string
+        type: array
+      weight:
+        type: number
     type: object
   v1_user_handler.UpdateUserBody:
     properties:

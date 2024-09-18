@@ -1173,6 +1173,9 @@
                 }
             }
         },
+        "pgtype.JSONBCodec": {
+            "type": "object"
+        },
         "responses.CorrectResponse": {
             "description": "Action code and readable message. Data and Pagination is optional",
             "type": "object",
@@ -1339,11 +1342,147 @@
                 }
             }
         },
+        "v1_item_handler.EditCombat": {
+            "type": "object",
+            "properties": {
+                "ac": {
+                    "type": "integer"
+                },
+                "damage": {
+                    "$ref": "#/definitions/v1_item_handler.EditDamage"
+                }
+            }
+        },
+        "v1_item_handler.EditCost": {
+            "type": "object",
+            "properties": {
+                "copper": {
+                    "type": "integer"
+                },
+                "electrum": {
+                    "type": "integer"
+                },
+                "gold": {
+                    "type": "integer"
+                },
+                "platinum": {
+                    "type": "integer"
+                },
+                "silver": {
+                    "type": "integer"
+                }
+            }
+        },
+        "v1_item_handler.EditDamage": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "faces": {
+                    "type": "integer"
+                },
+                "range": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "integer"
+                }
+            }
+        },
         "v1_item_handler.EditItemBody": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "atunement": {
+                    "type": "boolean"
+                },
+                "combat": {
+                    "$ref": "#/definitions/v1_item_handler.EditCombat"
+                },
+                "contains": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "cost": {
+                    "$ref": "#/definitions/v1_item_handler.EditCost"
+                },
+                "descriptom": {
+                    "$ref": "#/definitions/pgtype.JSONBCodec"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "$ref": "#/definitions/pgtype.JSONBCodec"
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "rarity": {
+                    "type": "integer"
+                },
+                "source": {
+                    "type": "string"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "weight": {
+                    "type": "number"
+                }
+            }
         },
         "v1_item_handler.ItemBody": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "atunement": {
+                    "type": "boolean"
+                },
+                "combat": {
+                    "$ref": "#/definitions/models.Combat"
+                },
+                "contains": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "cost": {
+                    "$ref": "#/definitions/models.Cost"
+                },
+                "descriptom": {
+                    "$ref": "#/definitions/pgtype.JSONBCodec"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "$ref": "#/definitions/pgtype.JSONBCodec"
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "rarity": {
+                    "type": "integer"
+                },
+                "source": {
+                    "type": "string"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "weight": {
+                    "type": "number"
+                }
+            }
         },
         "v1_user_handler.UpdateUserBody": {
             "type": "object",
